@@ -1,6 +1,7 @@
 <div id="top"></div>
 
 <!-- PROJECT LOGO -->
+
 <br />
 <div align="center">
   <a href="https://github.com/CMSC100-UV4L/project-kennethtegrado">
@@ -9,7 +10,7 @@
 
 <h3 align="center">Clearify</h3>
 
-  <p align="center">
+<p align="center">
     A full stack application for a clearance approval system for the Institute of Computer Science Systems
     <br />
     <a href="https://github.com/CMSC100-UV4L/project-kennethtegrado"><strong>Explore the docs »</strong></a>
@@ -24,6 +25,7 @@
 </div>
 
 <!-- TABLE OF CONTENTS -->
+
 <details>
   <summary>Table of Contents</summary>
   <ol>
@@ -57,8 +59,8 @@
 
 ### Built With
 
--   [![React][React.js]][React-url]
--   [![Express][Express.js]][Express-url]
+-   [React][React-url]
+-   [Express][Express-url]
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
@@ -120,10 +122,12 @@ See the [open issues](https://github.com/CMSC100-UV4L/project-kennethtegrado/iss
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
-<!-- CONTRIBUTING -->s
+<!-- CONTRIBUTING -->
+
 <!-- LICENSE -->
 
 <!-- MARKDOWN LINKS & IMAGES -->
+
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
 
 [React.js]: https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB
