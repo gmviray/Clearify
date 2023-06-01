@@ -91,6 +91,57 @@ export const signIn = async (req: Request, res: Response) => {
             StatusCodes.BAD_REQUEST
         );
 
-    if (!(await user.correctPassword(password))) {
-    }
+    if (!(await user.correctPassword(password)))
+        throw new APIError(
+            { password: "Invalid password." },
+            StatusCodes.BAD_REQUEST
+        );
+
+    let message;
+
+    if (user.userType == "student")
+        message = {
+            firstName: user.firstName,
+            middleName: user.middleName,
+            lastName: user.lastName,
+            studentNumber: user.studentNumber,
+            email,
+            userType: user.userType,
+            adviser: user.adviser,
+            application: user.application,
+        };
+    else if (user.userType == "approver")
+        message = {
+            firstName: user.firstName,
+            middleName: user.middleName,
+            lastName: user.lastName,
+            username: user.username,
+            email,
+            userType: user.userType,
+            clearanceOfficer: user.clearanceOfficer,
+        };
+    else
+        message = message = {
+            firstName: user.firstName,
+            middleName: user.middleName,
+            lastName: user.lastName,
+            email,
+            userType: user.userType,
+        };
+
+    return res
+        .cookie("token-id", user.createJWT(), {
+            httpOnly: true,
+            secure: true,
+            sameSite: "strict",
+            maxAge: config.jwtLifetime ? +config.jwtLifetime : 0,
+        })
+        .status(StatusCodes.CREATED)
+        .json(
+            makeAPIResponse(
+                message,
+                "Successfully signed in user account!",
+                StatusCodes.OK
+            )
+        );
 };
