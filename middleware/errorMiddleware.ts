@@ -17,18 +17,12 @@ export default async (
     res: Response,
     next: NextFunction
 ) => {
-    let APIResponse: APIResponseObject<any>;
-
-    console.log(err);
-
     if (err instanceof APIError)
         return res.status(err.statusCodes).json(err.body);
 
-    // if (err.name == "Validation Error") {
-    //     APIResponse = {
-
-    //     }
-    // }
+    if (err.name == "ValidationError") {
+        return res.status(StatusCodes.BAD_REQUEST).json(err.message);
+    }
 
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ success: false });
 };

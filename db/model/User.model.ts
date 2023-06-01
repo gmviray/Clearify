@@ -27,6 +27,15 @@ const UserSchema = new Schema({
         type: String,
         required: true,
         unique: true,
+        validate: {
+            validator: async function (value: string) {
+                const existingUser = await model("user").findOne({
+                    email: value,
+                });
+                return !existingUser;
+            },
+            message: "Account already exists",
+        },
     },
     password: { type: String, required: true },
     userType: { type: String, required: true },

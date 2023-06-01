@@ -80,6 +80,74 @@ export const createStudent = async (req: Request, res: Response) => {
         );
 };
 
+export const createApprover = async (req: Request, res: Response) => {
+    // destructure data from request body
+    const {
+        firstName,
+        middleName,
+        lastName,
+        username,
+        email,
+        password,
+        clearanceOfficer,
+    } = req.body;
+
+    // VALIDATING DATA
+    const errors: Array<{ [key: string]: string }> = [];
+
+    const emailPattern = new RegExp("^[a-z0-9]+@up.edu.ph$");
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/;
+
+    if (!firstName) errors.push({ firstName: "Please indicate a first name." });
+    if (!lastName) errors.push({ lastName: "Please indicate a last name." });
+    if (!username) errors.push({ username: "Please indicate a username." });
+    if (!email) errors.push({ email: "Please indicate an email." });
+    else {
+        if (!emailPattern.test(email))
+            errors.push({ email: "Please indicate a valid UP email." });
+    }
+    if (!password) errors.push({ password: "Please indicate a password." });
+    else {
+        if (password.length !== 8 && !passwordRegex.test(password))
+            errors.push({ password: "Please indicate a valid password." });
+    }
+
+    if (errors.length) throw new APIError(errors, StatusCodes.BAD_REQUEST);
+
+    if (clearanceOfficer) {
+        const user = await UserModel.findOne({ clearanceOfficer });
+
+        if (user)
+            throw new APIError(
+                "There is already an existing clearance officer.",
+                StatusCodes.BAD_REQUEST
+            );
+    }
+
+    const user = new UserModel({
+        firstName,
+        middleName: middleName ? middleName : null,
+        lastName,
+        email,
+        username,
+        password,
+        userType: "approver",
+        clearanceOfficer,
+    });
+
+    await user.save();
+
+    return res
+        .status(StatusCodes.CREATED)
+        .json(
+            makeAPIResponse(
+                {},
+                "Successfully created a new approver account!",
+                StatusCodes.CREATED
+            )
+        );
+};
+
 export const signIn = async (req: Request, res: Response) => {
     const { email, password } = req.body;
 
@@ -122,9 +190,6 @@ export const signIn = async (req: Request, res: Response) => {
         };
     else
         message = message = {
-            firstName: user.firstName,
-            middleName: user.middleName,
-            lastName: user.lastName,
             email,
             userType: user.userType,
         };
@@ -143,5 +208,14 @@ export const signIn = async (req: Request, res: Response) => {
                 "Successfully signed in user account!",
                 StatusCodes.OK
             )
+        );
+};
+
+export const signOut = async (_: Request, res: Response) => {
+    return res
+        .clearCookie("token-id")
+        .status(StatusCodes.OK)
+        .json(
+            makeAPIResponse({}, "Successfully signed out user.", StatusCodes.OK)
         );
 };
