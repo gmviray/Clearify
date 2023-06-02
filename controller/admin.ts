@@ -301,6 +301,9 @@ export const deleteApprover = async (req: Request, res: Response) => {
             StatusCodes.BAD_REQUEST
         );
 
+    // set advisers of students to null
+    await UserModel.updateMany({ adviser: approver._id }, { adviser: null });
+
     await approver.deleteOne();
 
     return res
@@ -309,6 +312,52 @@ export const deleteApprover = async (req: Request, res: Response) => {
             makeAPIResponse(
                 {},
                 `Successfully deleted account of ${username}.`,
+                StatusCodes.OK
+            )
+        );
+};
+
+export const editApprover = async (req: Request, res: Response) => {
+    const {
+        firstName,
+        lastName,
+        email,
+        middleName,
+        clearanceOfficer,
+        password,
+    } = req.body;
+
+    const approver = await UserModel.findOne({ email });
+
+    if (!approver)
+        throw new APIError(
+            { email: "Account does not exists." },
+            StatusCodes.BAD_REQUEST
+        );
+
+    if (firstName) approver.firstName = firstName;
+    if (middleName) approver.middleName = middleName;
+    if (lastName) approver.lastName = lastName;
+    if (password) {
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/;
+
+        if (!passwordRegex.test(password))
+            throw new APIError(
+                { password: "Invalid password" },
+                StatusCodes.BAD_REQUEST
+            );
+        approver.password = password;
+    }
+    if (clearanceOfficer) approver.clearanceOfficer = clearanceOfficer;
+
+    await approver.save({ validateModifiedOnly: true });
+
+    return res
+        .status(StatusCodes.OK)
+        .json(
+            makeAPIResponse(
+                {},
+                "Successfully edited approver account",
                 StatusCodes.OK
             )
         );

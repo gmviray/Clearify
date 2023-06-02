@@ -11,6 +11,7 @@ import {
     getAdviserNames,
     getApprovers,
     deleteApprover,
+    editApprover,
 } from "../controller/admin";
 
 const router = Router();
@@ -36,7 +37,7 @@ router.get("/adviser-names/", getAdviserNames);
 
 router.get("/approvers", getApprovers);
 
-router.delete("/approver/:username", deleteApprover);
+router.route("/approver/:username").delete(deleteApprover).patch(editApprover);
 
 // router.post("/admin", createAdmin);
 
