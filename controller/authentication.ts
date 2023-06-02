@@ -1,10 +1,12 @@
 import type { Request, Response } from "express";
-
-import { UserModel } from "../db/model";
-
-import { APIError, makeAPIResponse } from "../utils";
 import { StatusCodes } from "http-status-codes";
 import config from "../config";
+
+// User Model
+import { UserModel } from "../db/model";
+
+// API Interface
+import { APIError, makeAPIResponse } from "../utils";
 
 export const createStudent = async (req: Request, res: Response) => {
     // destructure data from request body
@@ -50,6 +52,7 @@ export const createStudent = async (req: Request, res: Response) => {
         userType: "student",
         adviser: null,
         application: null,
+        verified: false,
     });
 
     await user.save();
@@ -57,9 +60,8 @@ export const createStudent = async (req: Request, res: Response) => {
     return res
         .cookie("token-id", user.createJWT(), {
             httpOnly: true,
-            secure: true,
             sameSite: "strict",
-            maxAge: config.jwtLifetime ? +config.jwtLifetime : 0,
+            maxAge: 7 * 24 * 60 * 60 * 1000,
         })
         .status(StatusCodes.CREATED)
         .json(
@@ -73,66 +75,9 @@ export const createStudent = async (req: Request, res: Response) => {
                     userType: user.userType,
                     adviser: user.adviser,
                     application: user.application,
+                    verified: false,
                 },
                 "Successfully created a new student account!",
-                StatusCodes.CREATED
-            )
-        );
-};
-
-export const createApprover = async (req: Request, res: Response) => {
-    // destructure data from request body
-    const {
-        firstName,
-        middleName,
-        lastName,
-        username,
-        email,
-        password,
-        clearanceOfficer,
-    } = req.body;
-
-    // VALIDATING DATA
-    const errors: Array<{ [key: string]: string }> = [];
-
-    const emailPattern = new RegExp("^[a-z0-9]+@up.edu.ph$");
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/;
-
-    if (!firstName) errors.push({ firstName: "Please indicate a first name." });
-    if (!lastName) errors.push({ lastName: "Please indicate a last name." });
-    if (!username) errors.push({ username: "Please indicate a username." });
-    if (!email) errors.push({ email: "Please indicate an email." });
-    else {
-        if (!emailPattern.test(email))
-            errors.push({ email: "Please indicate a valid UP email." });
-    }
-    if (!password) errors.push({ password: "Please indicate a password." });
-    else {
-        if (password.length !== 8 && !passwordRegex.test(password))
-            errors.push({ password: "Please indicate a valid password." });
-    }
-
-    if (errors.length) throw new APIError(errors, StatusCodes.BAD_REQUEST);
-
-    const user = new UserModel({
-        firstName,
-        middleName: middleName ? middleName : null,
-        lastName,
-        email,
-        username,
-        password,
-        userType: "approver",
-        clearanceOfficer,
-    });
-
-    await user.save();
-
-    return res
-        .status(StatusCodes.CREATED)
-        .json(
-            makeAPIResponse(
-                {},
-                "Successfully created a new approver account!",
                 StatusCodes.CREATED
             )
         );
@@ -167,6 +112,7 @@ export const signIn = async (req: Request, res: Response) => {
             userType: user.userType,
             adviser: user.adviser,
             application: user.application,
+            verified: user.verified,
         };
     else if (user.userType == "approver")
         message = {
@@ -187,9 +133,8 @@ export const signIn = async (req: Request, res: Response) => {
     return res
         .cookie("token-id", user.createJWT(), {
             httpOnly: true,
-            secure: true,
             sameSite: "strict",
-            maxAge: config.jwtLifetime ? +config.jwtLifetime : 0,
+            maxAge: 7 * 24 * 60 * 60 * 1000,
         })
         .status(StatusCodes.CREATED)
         .json(

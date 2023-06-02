@@ -1,3 +1,4 @@
 import AuthRouter from "./authentication";
+import AdminRouter from "./admin";
 
-export { AuthRouter };
+export { AuthRouter, AdminRouter };

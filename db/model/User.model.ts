@@ -16,6 +16,7 @@ interface IUser extends Document {
     application?: Types.ObjectId;
     adviser?: Types.ObjectId;
     clearanceOfficer?: boolean;
+    verified?: boolean;
     correctPassword(candidatePassword: string): Promise<boolean>;
     createJWT(): string;
 }
@@ -83,6 +84,7 @@ const UserSchema = new Schema({
             message: "There is already an existing clearance officer.",
         },
     },
+    verified: Boolean,
 });
 
 UserSchema.index(

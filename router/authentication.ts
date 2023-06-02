@@ -1,20 +1,15 @@
-import express from "express";
+import { Router } from "express";
 
-import {
-    createApprover,
-    createStudent,
-    signIn,
-    signOut,
-} from "../controller/authentication";
+import { createStudent, signIn, signOut } from "../controller/authentication";
 
-const router = express.Router();
+const router = Router();
 
 router.post("/sign-up", createStudent);
-
-router.post("/sign-up/approver", createApprover);
 
 router.post("/sign-in", signIn);
 
 router.post("/sign-out", signOut);
+
+// router.post("/admin", createAdmin);
 
 export default router;
