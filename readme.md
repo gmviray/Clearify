@@ -105,9 +105,39 @@ This is an example of how to list things you need to use the software and how to
 
 ## Usage
 
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
+### Endpoints
 
-_For more examples, please refer to the [Documentation](https://example.com)_
+#### Admin
+
+**Fetching pending students:** `/api/students/pending`
+**Verifying student account:**
+
+```curl
+curl -X POST -H "Content-Type: application/json" -d '{
+  "email": "email@up.edu.ph"
+}' /api/student/verify
+```
+
+**Rejecting student account:**
+
+```curl
+curl -X POST -H "Content-Type: application/json" -d '{
+  "email": "email@up.edu.ph"
+}' /api/student/reject
+```
+
+**Creating an approver account:**
+
+```curl
+curl -X POST -H "Content-Type: application/json" -d '{
+  "firstName": "fname",
+  "lastName": "lname",
+  "username": "uniqueUsername",
+  "email": "email@up.edu.ph",
+  "password": "password",
+  "clearanceOfficer": true
+}' /api/sign-up/approver
+```
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 

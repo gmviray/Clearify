@@ -1,4 +1,5 @@
 import dotenv from "dotenv";
+import { Secret } from "jsonwebtoken";
 dotenv.config();
 
 const getConfig = (title: string) => {
@@ -10,4 +11,6 @@ const getConfig = (title: string) => {
 export default {
     port: getConfig("PORT"),
     mongodb: getConfig("MONGODBURL"),
+    jwtSecret: getConfig("JWT_SECRET") as Secret,
+    jwtLifetime: getConfig("JWT_LIFETIME"),
 };

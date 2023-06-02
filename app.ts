@@ -1,9 +1,28 @@
 import express, { Request, Response } from "express";
 
+import cookierParser from "cookie-parser";
+
+import "express-async-errors";
+
+// Routers
+import { AdminRouter, AuthRouter } from "./router";
+
+// middleware
+import { errorMiddleware } from "./middleware";
+
 const app: express.Application = express();
 
-app.use("/api", (_: Request, res: Response) => {
+app.use(express.json());
+
+app.use(cookierParser());
+
+app.use("/api", AuthRouter);
+app.use("/api", AdminRouter);
+
+app.get("/api", (_: Request, res: Response) => {
     res.status(200).send("Hello World");
 });
+
+app.use(errorMiddleware);
 
 export default app;
