@@ -1,6 +1,7 @@
 interface APIResponseObject<Type> {
     success: boolean;
-    data: Type;
+    data?: Type;
+    errors?: Type;
     message: string;
     statusCode: number;
 }

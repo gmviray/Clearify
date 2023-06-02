@@ -114,16 +114,6 @@ export const createApprover = async (req: Request, res: Response) => {
 
     if (errors.length) throw new APIError(errors, StatusCodes.BAD_REQUEST);
 
-    if (clearanceOfficer) {
-        const user = await UserModel.findOne({ clearanceOfficer });
-
-        if (user)
-            throw new APIError(
-                "There is already an existing clearance officer.",
-                StatusCodes.BAD_REQUEST
-            );
-    }
-
     const user = new UserModel({
         firstName,
         middleName: middleName ? middleName : null,

@@ -6,10 +6,14 @@ export default <T>(
     message: string,
     statusCode: number
 ): APIResponseObject<T> => {
+    const success =
+        statusCode >= StatusCodes.CONTINUE &&
+        statusCode <= StatusCodes.PERMANENT_REDIRECT;
+
+    if (!success) return { success, errors: data, message, statusCode };
+
     return {
-        success:
-            statusCode >= StatusCodes.CONTINUE &&
-            statusCode <= StatusCodes.PERMANENT_REDIRECT,
+        success,
         data,
         message,
         statusCode,
