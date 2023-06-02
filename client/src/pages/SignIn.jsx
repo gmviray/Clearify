@@ -25,15 +25,15 @@ const SignInPage = () => {
                                 <label className="label" htmlFor="email">
                                     <span className="label-text font-bold text-primary"> Email </span>
                                 </label>
-                                <input type="text" placeholder="UP Mail" className="input input-bordered" id="email" {...register("emailInvalid", { required: true })} />
-                                {errors.emailInvalid && <span className="label-text-alt text-error">Invalid email address</span>}
+                                <input type="text" placeholder="UP Mail" className="input input-bordered" id="email" {...register("emailInput", { required: true })} />
+                                {errors.emailInput && <span className="label-text-alt text-error">Invalid email address</span>}
                             </div>
                             <div className="form-control">
                                 <label className="label" htmlFor="password">
                                     <span className="label-text font-bold text-primary"> Password </span>
                                 </label>
-                                <input type="password" placeholder="Enter your password" className="input input-bordered" id="password" {...register("passwordInvalid", { required: true })} />
-                                {errors.passwordInvalid && <span className="label-text-alt text-error">This is a required field.</span>}
+                                <input type="password" placeholder="Enter your password" className="input input-bordered" id="password" {...register("passwordInput", { required: true })} />
+                                {errors.passwordInput && <span className="label-text-alt text-error">This is a required field.</span>}
                             </div>
 
                             <button className="btn btn-primary w-full font-bold text-gray-200 mt-8" type="submit">
