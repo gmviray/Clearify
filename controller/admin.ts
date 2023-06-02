@@ -4,19 +4,24 @@ import { APIError, makeAPIResponse } from "../utils";
 import { StatusCodes } from "http-status-codes";
 
 export const verifyAccount = async (req: Request, res: Response) => {
-    const { email } = req.body;
+    const { studentNumber } = req.body;
 
-    const user = await UserModel.findOne({ email });
+    const user = await UserModel.updateMany(
+        { studentNumber },
+        { verified: true }
+    );
 
-    if (!user)
+    if (!user.matchedCount)
         throw new APIError(
             { email: "Account does not exist." },
             StatusCodes.BAD_REQUEST
         );
 
-    user.verified = true;
-
-    await user.save();
+    if (!user.modifiedCount)
+        throw new APIError(
+            { email: "Account is already verified." },
+            StatusCodes.BAD_REQUEST
+        );
 
     return res
         .status(StatusCodes.OK)
@@ -30,9 +35,9 @@ export const verifyAccount = async (req: Request, res: Response) => {
 };
 
 export const rejectAccount = async (req: Request, res: Response) => {
-    const { email } = req.body;
+    const { studentNumber } = req.body;
 
-    const user = await UserModel.findOne({ email });
+    const user = await UserModel.findOne({ studentNumber });
 
     if (!user)
         throw new APIError(
@@ -46,7 +51,11 @@ export const rejectAccount = async (req: Request, res: Response) => {
     return res
         .status(StatusCodes.OK)
         .json(
-            makeAPIResponse({}, "Successfully deleted account.", StatusCodes.OK)
+            makeAPIResponse(
+                {},
+                "Successfully rejected account.",
+                StatusCodes.OK
+            )
         );
 };
 
@@ -124,6 +133,7 @@ export const createApprover = async (req: Request, res: Response) => {
 export const getPendingStudents = async (req: Request, res: Response) => {
     const unverifiedStudents = await UserModel.find({
         verified: false,
+        userType: "student",
     }).select("studentNumber firstName middleName lastName email");
 
     return res
@@ -140,15 +150,7 @@ export const getPendingStudents = async (req: Request, res: Response) => {
 export const assignAdviser = async (req: Request, res: Response) => {
     const { studentNumber, username } = req.body;
 
-    const student = await UserModel.findOne({ studentNumber });
-
     const adviser = await UserModel.findOne({ username });
-
-    if (!student)
-        throw new APIError(
-            { studentNumber: "Student does not exist." },
-            StatusCodes.BAD_REQUEST
-        );
 
     if (!adviser)
         throw new APIError(
@@ -156,9 +158,18 @@ export const assignAdviser = async (req: Request, res: Response) => {
             StatusCodes.BAD_REQUEST
         );
 
-    student.adviser = adviser._id;
+    const student = await UserModel.updateOne(
+        { studentNumber },
+        { adviser: adviser._id }
+    );
 
-    await student.save();
+    if (!student.modifiedCount)
+        throw new APIError(
+            {
+                studentNumber: `Failed to update adviser of student ${studentNumber}.`,
+            },
+            StatusCodes.BAD_REQUEST
+        );
 
     return res
         .status(StatusCodes.OK)
@@ -178,27 +189,23 @@ export const assignAdvisers = async (req: Request, res: Response) => {
     const errors = [];
 
     for (const { studentNumber, username } of data) {
-        const student = await UserModel.findOne({ studentNumber });
-
         const adviser = await UserModel.findOne({ username });
 
-        if (!student || !adviser) {
-            if (!student)
-                errors.push({
-                    studentNumber: `Student ${studentNumber} does not exist.`,
-                });
-
-            if (!adviser)
-                errors.push({
-                    username: `Adviser ${username} does not exist.`,
-                });
-
+        if (!adviser) {
+            errors.push({
+                adviser: `Failed to assign adviser to student ${studentNumber}, because adviser ${username} does not exist.`,
+            });
             continue;
         }
+        const student = await UserModel.updateOne(
+            { studentNumber },
+            { adviser: adviser._id }
+        );
 
-        student.adviser = adviser._id;
-
-        await student.save();
+        if (!student.modifiedCount)
+            errors.push({
+                studentNumber: `Failed to update adviser of student ${studentNumber}.`,
+            });
     }
 
     res.status(StatusCodes.OK);
@@ -218,6 +225,90 @@ export const assignAdvisers = async (req: Request, res: Response) => {
             makeAPIResponse(
                 {},
                 "Successfully assigned a student to an adviser.",
+                StatusCodes.OK
+            )
+        );
+};
+
+export const getStudents = async (req: Request, res: Response) => {
+    const { name } = req.query;
+
+    const query: { verified: boolean; userType: "student"; name?: any } = {
+        verified: true,
+        userType: "student",
+    };
+
+    if (name) query["name"] = { $regex: `^.*${name}.*$`, $options: "i" };
+
+    const students = await UserModel.find(query).select(
+        "studentNumber firstName middleName lastName email adviser"
+    );
+
+    return res
+        .status(StatusCodes.OK)
+        .json(
+            makeAPIResponse(
+                students,
+                "Successfully fetched students",
+                StatusCodes.OK
+            )
+        );
+};
+
+export const getAdviserNames = async (req: Request, res: Response) => {
+    const advisers = await UserModel.find({
+        verified: true,
+        userType: "approver",
+        clearanceOfficer: null,
+    }).select("username firstName middleName lastName");
+
+    return res
+        .status(StatusCodes.OK)
+        .json(
+            makeAPIResponse(
+                advisers,
+                "Successfully fetched list of adviser names.",
+                StatusCodes.OK
+            )
+        );
+};
+
+export const getApprovers = async (req: Request, res: Response) => {
+    return res.status(StatusCodes.OK).json(
+        makeAPIResponse(
+            await UserModel.find({
+                userType: "approver",
+            }).select(
+                "username firstName middleName lastName email clearanceOfficer"
+            ),
+            "Successfully fetched list of approvers.",
+            StatusCodes.OK
+        )
+    );
+};
+
+export const deleteApprover = async (req: Request, res: Response) => {
+    const username = req.params.username;
+
+    const approver = await UserModel.findOne({
+        userType: "approver",
+        username,
+    });
+
+    if (!approver)
+        throw new APIError(
+            { username: "User does not exist." },
+            StatusCodes.BAD_REQUEST
+        );
+
+    await approver.deleteOne();
+
+    return res
+        .status(StatusCodes.OK)
+        .json(
+            makeAPIResponse(
+                {},
+                `Successfully deleted account of ${username}.`,
                 StatusCodes.OK
             )
         );

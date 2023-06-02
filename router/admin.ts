@@ -7,6 +7,10 @@ import {
     getPendingStudents,
     assignAdviser,
     assignAdvisers,
+    getStudents,
+    getAdviserNames,
+    getApprovers,
+    deleteApprover,
 } from "../controller/admin";
 
 const router = Router();
@@ -25,6 +29,14 @@ router.post("/student/assign-adviser", assignAdviser);
 router.post("/students/assign-adviser", assignAdvisers);
 
 router.get("/students/pending", getPendingStudents);
+
+router.get("/students/", getStudents);
+
+router.get("/adviser-names/", getAdviserNames);
+
+router.get("/approvers", getApprovers);
+
+router.delete("/approver/:username", deleteApprover);
 
 // router.post("/admin", createAdmin);
 

@@ -19,6 +19,7 @@ interface IUser extends Document {
     verified?: boolean;
     correctPassword(candidatePassword: string): Promise<boolean>;
     createJWT(): string;
+    name: string;
 }
 
 const UserSchema = new Schema({
@@ -85,6 +86,7 @@ const UserSchema = new Schema({
         },
     },
     verified: Boolean,
+    name: String,
 });
 
 UserSchema.index(
@@ -110,6 +112,9 @@ UserSchema.pre("save", async function () {
     if (!this.isModified("password")) return;
     const salt = await bcryptjs.genSalt(12);
     this.password = await bcryptjs.hash(this.password, salt);
+    this.name = `${this.firstName} ${this.middleName ? this.middleName : ""} ${
+        this.lastName
+    }`;
 });
 
 UserSchema.methods.correctPassword = async function (
