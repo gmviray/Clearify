@@ -120,3 +120,105 @@ export const createApprover = async (req: Request, res: Response) => {
             )
         );
 };
+
+export const getPendingStudents = async (req: Request, res: Response) => {
+    const unverifiedStudents = await UserModel.find({
+        verified: false,
+    }).select("studentNumber firstName middleName lastName email");
+
+    return res
+        .status(StatusCodes.OK)
+        .json(
+            makeAPIResponse(
+                unverifiedStudents,
+                "Successfully fetched unverified students",
+                StatusCodes.OK
+            )
+        );
+};
+
+export const assignAdviser = async (req: Request, res: Response) => {
+    const { studentNumber, username } = req.body;
+
+    const student = await UserModel.findOne({ studentNumber });
+
+    const adviser = await UserModel.findOne({ username });
+
+    if (!student)
+        throw new APIError(
+            { studentNumber: "Student does not exist." },
+            StatusCodes.BAD_REQUEST
+        );
+
+    if (!adviser)
+        throw new APIError(
+            { adviser: "Approver account does not exist." },
+            StatusCodes.BAD_REQUEST
+        );
+
+    student.adviser = adviser._id;
+
+    await student.save();
+
+    return res
+        .status(StatusCodes.OK)
+        .json(
+            makeAPIResponse(
+                {},
+                "Successfully assigned a student to an adviser.",
+                StatusCodes.OK
+            )
+        );
+};
+
+export const assignAdvisers = async (req: Request, res: Response) => {
+    const { data }: { data: { studentNumber: string; username: string }[] } =
+        req.body;
+
+    const errors = [];
+
+    for (const { studentNumber, username } of data) {
+        const student = await UserModel.findOne({ studentNumber });
+
+        const adviser = await UserModel.findOne({ username });
+
+        if (!student || !adviser) {
+            if (!student)
+                errors.push({
+                    studentNumber: `Student ${studentNumber} does not exist.`,
+                });
+
+            if (!adviser)
+                errors.push({
+                    username: `Adviser ${username} does not exist.`,
+                });
+
+            continue;
+        }
+
+        student.adviser = adviser._id;
+
+        await student.save();
+    }
+
+    res.status(StatusCodes.OK);
+
+    if (errors.length)
+        return res.json(
+            makeAPIResponse(
+                { errors: errors },
+                "Failed to assign adviser to some of the students due to the following errors.",
+                StatusCodes.OK
+            )
+        );
+
+    return res
+        .status(StatusCodes.OK)
+        .json(
+            makeAPIResponse(
+                {},
+                "Successfully assigned a student to an adviser.",
+                StatusCodes.OK
+            )
+        );
+};

@@ -10,6 +10,4 @@ router.post("/sign-in", signIn);
 
 router.post("/sign-out", signOut);
 
-// router.post("/admin", createAdmin);
-
 export default router;
