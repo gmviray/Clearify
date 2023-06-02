@@ -1,9 +1,9 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { HomePage, SignInPage, SignUpPage } from "./pages";
+import { MainPage, SignInPage, SignUpPage } from "./pages";
 import { ErrorBoundary } from "./components";
 
 const router = createBrowserRouter([
-    { path: "/", element: <HomePage />, errorElement: <ErrorBoundary /> },
+    { path: "/", element: <MainPage />, errorElement: <ErrorBoundary /> },
     { path: "/sign-in", element: <SignInPage /> },
     { path: "/sign-up", element: <SignUpPage /> },
 ]);
