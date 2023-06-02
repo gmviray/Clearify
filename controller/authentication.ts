@@ -60,7 +60,7 @@ export const createStudent = async (req: Request, res: Response) => {
     return res
         .cookie("token-id", user.createJWT(), {
             httpOnly: true,
-            sameSite: "strict",
+            sameSite: "none",
             maxAge: 7 * 24 * 60 * 60 * 1000,
         })
         .status(StatusCodes.CREATED)
@@ -96,7 +96,7 @@ export const signIn = async (req: Request, res: Response) => {
 
     if (!(await user.correctPassword(password)))
         throw new APIError(
-            { password: "Invalid password." },
+            { password: "Incorrect password." },
             StatusCodes.BAD_REQUEST
         );
 
@@ -133,7 +133,7 @@ export const signIn = async (req: Request, res: Response) => {
     return res
         .cookie("token-id", user.createJWT(), {
             httpOnly: true,
-            sameSite: "strict",
+            sameSite: "none",
             maxAge: 7 * 24 * 60 * 60 * 1000,
         })
         .status(StatusCodes.CREATED)

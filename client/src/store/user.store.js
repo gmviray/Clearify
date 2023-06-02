@@ -20,6 +20,13 @@ export default create()(
                     if (err.response) return err.response.data;
                 }
             },
+            signOut: async () => {
+                try {
+                    const response = await apiAxios.post("/sign-out");
+
+                    set((_) => ({ user: undefined }));
+                } catch (err) {}
+            },
         }),
         {
             name: "user-storage",
