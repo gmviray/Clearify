@@ -32,7 +32,6 @@ const SignInPage = () => {
         const response = await signIn(data.emailInput, data.passwordInput);
 
         if (!response.success) {
-            console.log(response.errors.email);
             if (response.errors.email)
                 setError("emailInput", {
                     type: "custom",
