@@ -32,7 +32,7 @@ export const createApplication = async (req: Request, res: Response) => {
             StatusCodes.BAD_REQUEST
         );
 
-    if (adviser)
+    if (!adviser)
         throw new APIError(
             { adviser: "Adviser does not exist." },
             StatusCodes.BAD_REQUEST
@@ -90,7 +90,7 @@ export const getStudent = async (req: Request, res: Response) => {
 
     if (student.adviser) {
         const adviser = await UserModel.findOne({
-            adviser: student.adviser,
+            _id: student.adviser,
         }).select("firstName lastName middleName username email");
 
         data["adviser"] = adviser;
