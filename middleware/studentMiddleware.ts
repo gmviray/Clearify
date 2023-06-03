@@ -7,7 +7,7 @@ export default async (req: Request, res: Response, next: NextFunction) => {
 
     const decoded = decodeJWT(token);
 
-    if (decoded.userType != "admin" && decoded.userType != "approver")
+    if (decoded.userType != "student")
         throw new APIError(
             "Request is not allowed to access this resource.",
             StatusCodes.FORBIDDEN

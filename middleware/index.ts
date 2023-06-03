@@ -1,6 +1,6 @@
 import authMiddleware from "./authMiddleware";
 import errorMiddleware from "./errorMiddleware";
 import adminMiddleware from "./adminMiddleware";
-import usersMiddleware from "./usersMiddleware";
+import studentMiddleware from "./studentMiddleware";
 
-export { authMiddleware, errorMiddleware, adminMiddleware, usersMiddleware };
+export { authMiddleware, errorMiddleware, adminMiddleware, studentMiddleware };
