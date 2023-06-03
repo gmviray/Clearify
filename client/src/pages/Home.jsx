@@ -1,11 +1,21 @@
+import { useUserStore } from "../store";
+import { PendingAccountsPage } from "./admin";
+import { PendingApplicationsPage } from "./approver";
+import { StudentPage } from "./student";
+
 const HomePage = () => {
-    return (
-        <div className="container h-screen w-screen flex items-center mx-auto">
-            <h1 className="font-bold text-9xl text-center w-full">
-                Hello World!
-            </h1>
-        </div>
-    );
+    const user = useUserStore((state) => state.user);
+
+    switch (user.userType) {
+        case "admin":
+            return <PendingAccountsPage />;
+        case "approver":
+            return <PendingApplicationsPage />;
+        case "student":
+            return <StudentPage />;
+        default:
+            return <div></div>;
+    }
 };
 
 export default HomePage;
