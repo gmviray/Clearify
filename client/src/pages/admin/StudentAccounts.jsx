@@ -1,16 +1,14 @@
 import { useUserStore } from "../../store";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { apiAxios } from "../../utils";
 import useSWR from "swr";
 
+import { FaSortAlphaUp } from 'react-icons/fa';
+import { FaSortNumericUp } from 'react-icons/fa';
+
 const fetcher = (url) => apiAxios.get(url).then((res) => res.data);
 
-const StudentAccountsPage = () => {
-    const user = useUserStore((state) => state.user);
-
-    if (user.userType != "admin")
-        throw new Response("Not Found", { status: 404 });
-
+const printAllStudents = () => {
     const { data, error, isLoading } = useSWR("/students", fetcher);
 
     if (error) {
@@ -18,6 +16,83 @@ const StudentAccountsPage = () => {
         return <div>idk why this failed.</div>;
     }
     if (isLoading) return <div>Loading...</div>;
+    const students = data.data;
+
+    const [selectedStudent, setSelectedStudent] = useState(null); // State to store the selected student
+
+    const handleAssignAdviser = (student) => {
+        setSelectedStudent(student); // Set the selected student
+    };
+
+    const handleCloseModal = () => {
+        setSelectedStudent(null); // Clear the selected student
+    };
+
+    const handleAssign = () => {
+        // Implement the logic to assign an adviser to the selected student using the selectedStudent object
+        // ...
+        setSelectedStudent(null); // Clear the selected student after assigning the adviser
+    };
+
+    return (
+        <div className="table-container">
+            <table className="table">
+                <thead>
+                    <tr>
+                        <th className="text-primary bg-transparent pr-20">Student Number</th>
+                        <th className="text-primary bg-transparent pr-20">Name</th>
+                        <th className="text-primary bg-transparent pr-20">Email</th>
+                        <th className="text-primary bg-transparent pr-20">Adviser</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {students.map((student) => (
+                        <tr key={student._id}>
+                            <td>{student.studentNumber}</td>
+                            <td>{`${student.firstName} ${student.lastName}`}</td>
+                            <td>{student.email}</td>
+                            <td>
+                                {student.adviser ? (
+                                    student.adviser
+                                ) : (
+                                    <button className="px-2 py-1 bg-transparent text-primary rounded" onClick={() => handleAssignAdviser(student)}>Assign</button>
+                                )}
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+
+            {selectedStudent && (
+                <div className="modal">
+                    <div className="modal-content">
+                        <h2 className="text-primary">Assign Adviser</h2>
+                        <div>
+                            <select className="dropdown" placeholder="Search an adviser">
+                                {/* Render the list of advisers here */}
+                            </select>
+                        </div>
+                        <div>
+                            <button className="btn btn-primary" onClick={handleAssign}>Assign</button>
+                        </div>
+                        <button className="btn btn-secondary" onClick={handleCloseModal}>Close</button>
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+}
+
+const StudentAccountsPage = () => {
+    const user = useUserStore((state) => state.user);
+
+    if (user.userType !== "admin")
+        throw new Error("Not Found");
+
+    const handleAssignAdviser = () => {
+        // Implement the logic to handle the 'Assign' button click event here
+        // This function will be called when the 'Assign' button in the pop-up window is clicked
+    };
 
     return (
         <div>
@@ -44,21 +119,24 @@ const StudentAccountsPage = () => {
                     </svg>
                 </button>
             </div>
-            <div className="flex space-x-2 text-sm text-red-500 mb-6">
+            <div className="flex space-x-5 text-sm text-red-500 mb-6">
                 <button
                     key="0"
                     className="px-2 py-1 bg-transparent text-primary rounded"
                 >
                     Student Number
+                    <FaSortNumericUp />
                 </button>
                 <button
                     key="1"
                     className="px-2 py-1 bg-transparent text-primary rounded"
                 >
                     Name
+                    <FaSortAlphaUp />
                 </button>
             </div>
             <button className="btn btn-primary mb-4">UPLOAD A CSV</button>
+            {printAllStudents()}
         </div>
     );
 };

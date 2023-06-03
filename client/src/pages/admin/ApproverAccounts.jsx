@@ -1,6 +1,8 @@
 import { useUserStore } from "../../store";
 import { apiAxios } from "../../utils";
 
+import { FaSortAlphaUp } from 'react-icons/fa';
+
 const ApproverAccountsPage = () => {
     const user = useUserStore((state) => state.user);
 
@@ -31,9 +33,9 @@ const ApproverAccountsPage = () => {
               </button>
             </div>
             <div className="flex space-x-2 text-sm text-red-500 mb-6">
-                <button key='0' className="px-2 py-1 bg-transparent text-primary rounded">Approver Name</button>
+                <button key='0' className="px-2 py-1 bg-transparent text-primary rounded">Approver Name <FaSortAlphaUp /> </button>
             </div>
-            <button className="bg-primary text-gray-200 rounded uppercase text-sm font-medium px-4 py-2 mb-4">
+            <button className="btn btn-primary">
                     CREATE ACCOUNT
             </button>
         </div>

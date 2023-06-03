@@ -1,6 +1,9 @@
 import { useUserStore } from "../../store";
 import { apiAxios } from "../../utils";
 
+import { FaSortAlphaUp } from 'react-icons/fa';
+import { FaSortNumericUp } from 'react-icons/fa';
+
 const PendingAccountsPage = () => {
     const user = useUserStore((state) => state.user);
 
@@ -31,8 +34,8 @@ const PendingAccountsPage = () => {
               </button>
             </div>
             <div className="flex space-x-2 text-sm text-red-500 mb-6">
-                <button key='0' className="px-2 py-1 bg-transparent text-primary rounded">Student Number</button>
-                <button key='1' className="px-2 py-1 bg-transparent text-primary rounded">Name</button>
+                <button key='0' className="px-5 py-1 bg-transparent text-primary rounded">Student Number <FaSortNumericUp /></button>
+                <button key='1' className="px-5 py-1 bg-transparent text-primary rounded">Name <FaSortAlphaUp /></button>
             </div>
         </div>
     );
