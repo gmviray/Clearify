@@ -3,7 +3,7 @@ import { Schema, model, Document, Types } from "mongoose";
 type ApplicationSteps = 1 | 2 | 3 | 4 | 5;
 
 interface Remark {
-    remarkBy: {
+    remarkBy?: {
         email: string;
         username: string;
         lastName: string;

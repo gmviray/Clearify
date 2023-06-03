@@ -1,10 +1,19 @@
 import { Router } from "express";
-import { authMiddleware, studentMiddleware } from "../middleware";
-import { createApplication, getStudent } from "../controller/student";
+import { studentMiddleware } from "../middleware";
+import {
+    createApplication,
+    deleteApplication,
+    getStudent,
+    resubmitApplication,
+} from "../controller/student";
 
 const router = Router();
 
 router.get("/student", studentMiddleware, getStudent);
-router.post("/application", studentMiddleware, createApplication);
+router
+    .route("/application")
+    .post(studentMiddleware, createApplication)
+    .patch(studentMiddleware, resubmitApplication)
+    .delete(studentMiddleware, deleteApplication);
 
 export default router;

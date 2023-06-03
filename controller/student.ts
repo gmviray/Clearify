@@ -26,7 +26,12 @@ export const createApplication = async (req: Request, res: Response) => {
         "firstName middleName lastName email username"
     );
 
-    if (student.application)
+    const existingApplication = await ApplicationModel.find({
+        "createdBy.studentNumber": student.studentNumber,
+        status: "open",
+    });
+
+    if (existingApplication)
         throw new APIError(
             { studentNumber: "User already has an existing application." },
             StatusCodes.BAD_REQUEST
@@ -65,6 +70,70 @@ export const createApplication = async (req: Request, res: Response) => {
             makeAPIResponse(
                 {},
                 "Successfully created an application on user.",
+                StatusCodes.OK
+            )
+        );
+};
+
+export const resubmitApplication = async (req: Request, res: Response) => {
+    const token = req.cookies["token-id"];
+
+    const decoded = decodeJWT(token);
+
+    const { link, remark } = req.body;
+
+    const user = await UserModel.findOne({ _id: decoded.id }).select(
+        "studentNumber"
+    );
+
+    if (!user)
+        throw new APIError(
+            { user: "User does not exist." },
+            StatusCodes.UNAUTHORIZED
+        );
+
+    const application = await ApplicationModel.findOne({
+        "createdBy.studentNumber": user.studentNumber,
+        status: "open",
+    });
+
+    if (!application)
+        throw new APIError(
+            { user: "User does not have an existing application." },
+            StatusCodes.BAD_REQUEST
+        );
+
+    switch (application.step) {
+        case 1:
+        case 2:
+            application.previousSubmissions.push(application.submission);
+            application.submission = {
+                link,
+                date: new Date(),
+                remarks: [],
+                stepSubmitted: application.step,
+            };
+            application.step = 1;
+            break;
+        case 3:
+        case 4:
+            application.submission.remarks.push({
+                stepSubmitted: application.step,
+                remark,
+                date: new Date(),
+            });
+            application.step = 1;
+            break;
+    }
+
+    await application.save();
+
+    return res
+        .status(StatusCodes.OK)
+        .json(
+            makeAPIResponse(
+                {},
+                "Successfully resubmitted application.",
                 StatusCodes.OK
             )
         );
@@ -113,6 +182,49 @@ export const getStudent = async (req: Request, res: Response) => {
             makeAPIResponse(
                 data,
                 "Successfully fetched student data.",
+                StatusCodes.OK
+            )
+        );
+};
+
+export const deleteApplication = async (req: Request, res: Response) => {
+    const token = req.cookies["token-id"];
+
+    const decoded = decodeJWT(token);
+
+    const user = await UserModel.findOne({ _id: decoded.id });
+
+    if (!user)
+        throw new APIError(
+            { user: "User does not exist." },
+            StatusCodes.BAD_REQUEST
+        );
+
+    user.application = undefined;
+
+    await user.save({ validateModifiedOnly: true });
+
+    const application = await ApplicationModel.findOne({
+        "createdBy.studentNumber": user.studentNumber,
+        status: "open",
+    });
+
+    if (!application)
+        throw new APIError(
+            { application: "There's no existing application." },
+            StatusCodes.BAD_REQUEST
+        );
+
+    application.status = "closed";
+
+    await application.save();
+
+    return res
+        .status(StatusCodes.OK)
+        .json(
+            makeAPIResponse(
+                {},
+                "Successfully deleted application.",
                 StatusCodes.OK
             )
         );
