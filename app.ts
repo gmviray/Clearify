@@ -21,8 +21,8 @@ app.use(express.json());
 
 app.use(cookierParser());
 
-app.use(authMiddleware);
 app.use("/api", AuthRouter);
+app.use(authMiddleware);
 app.use("/api", AdminRouter);
 app.use("/api", StudentRouter);
 app.use("/api", ApproverRouter);
