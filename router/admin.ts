@@ -16,28 +16,28 @@ import {
 
 const router = Router();
 
-router.use(authMiddleware);
-router.use(adminMiddleware);
+router.post("/sign-up/approver", adminMiddleware, createApprover);
 
-router.post("/sign-up/approver", createApprover);
+router.post("/student/verify", adminMiddleware, verifyAccount);
 
-router.post("/student/verify", verifyAccount);
+router.post("/student/reject", adminMiddleware, rejectAccount);
 
-router.post("/student/reject", rejectAccount);
+router.post("/student/assign-adviser", adminMiddleware, assignAdviser);
 
-router.post("/student/assign-adviser", assignAdviser);
+router.post("/students/assign-adviser", adminMiddleware, assignAdvisers);
 
-router.post("/students/assign-adviser", assignAdvisers);
+router.get("/students/pending", adminMiddleware, getPendingStudents);
 
-router.get("/students/pending", getPendingStudents);
+router.get("/students/", adminMiddleware, getStudents);
 
-router.get("/students/", getStudents);
+router.get("/adviser-names/", adminMiddleware, getAdviserNames);
 
-router.get("/adviser-names/", getAdviserNames);
+router.get("/approvers", adminMiddleware, getApprovers);
 
-router.get("/approvers", getApprovers);
-
-router.route("/approver/:username").delete(deleteApprover).patch(editApprover);
+router
+    .route("/approver/:username")
+    .delete(adminMiddleware, deleteApprover)
+    .patch(adminMiddleware, editApprover);
 
 // router.post("/admin", createAdmin);
 

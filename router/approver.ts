@@ -5,16 +5,23 @@ import {
     getPendingOfficerApplications,
     rejectApplication,
 } from "../controller/approver";
-import { approverMiddleware, authMiddleware } from "../middleware";
+import { approverMiddleware } from "../middleware";
 
 const router = Router();
 
-router.use(authMiddleware);
-router.use(approverMiddleware);
+router.get(
+    "/officer/pending",
+    approverMiddleware,
+    getPendingOfficerApplications
+);
 
-router.get("/officer/pending", getPendingOfficerApplications);
-router.get("/adviser/:id/pending", getPendingAdviserApplications);
-router.get("/application/:id", getApplication);
-router.post("/application/:id", rejectApplication);
+router.get(
+    "/adviser/:id/pending",
+    approverMiddleware,
+    getPendingAdviserApplications
+);
+
+router.get("/application/:id", approverMiddleware, getApplication);
+router.post("/application/:id", approverMiddleware, rejectApplication);
 
 export default router;
