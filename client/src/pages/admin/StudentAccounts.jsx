@@ -3,8 +3,7 @@ import { useState } from "react";
 import { apiAxios } from "../../utils";
 import useSWR, { mutate } from "swr";
 
-import { FaSortAlphaUp } from 'react-icons/fa';
-import { FaSortNumericUp } from 'react-icons/fa';
+import { FaSortAlphaUp, FaSortAlphaDown, FaSortNumericUp, FaSortNumericDown } from 'react-icons/fa';
 
 const fetcher = (url) => apiAxios.get(url).then((res) => res.data);
 
@@ -21,6 +20,7 @@ const StudentAccountsPage = () => {
   const [selectedStudent, setSelectedStudent] = useState(null); // State to store the selected student
   const [searchQuery, setSearchQuery] = useState(""); // State to store the search query
   const [sortBy, setSortBy] = useState(""); // State to store the sort field
+  const [sortDirection, setSortDirection] = useState("asc"); // State to store the sort direction
 
   const handleAssignAdviser = (student) => {
     setSelectedStudent(student); // Set the selected student
@@ -41,7 +41,16 @@ const StudentAccountsPage = () => {
   };
 
   const handleSort = (field) => {
-    setSortBy(field); // Update the sort field state
+    if (field === sortBy) {
+      // If the same field is clicked again, toggle the sort direction
+      setSortDirection((prevDirection) =>
+        prevDirection === "asc" ? "desc" : "asc"
+      );
+    } else {
+      // If a different field is clicked, set the sort field and direction
+      setSortBy(field);
+      setSortDirection("asc");
+    }
   };
 
   // Filter the students based on the search query
@@ -49,14 +58,15 @@ const StudentAccountsPage = () => {
     student.firstName.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  // Sort the students based on the sort field
+  // Sort the students based on the sort field and direction
   const sortedStudents = filteredStudents.sort((a, b) => {
+    let comparison = 0;
     if (sortBy === "studentNumber") {
-      return a.studentNumber.localeCompare(b.studentNumber);
+      comparison = a.studentNumber.localeCompare(b.studentNumber);
     } else if (sortBy === "name") {
-      return a.firstName.localeCompare(b.firstName);
+      comparison = a.firstName.localeCompare(b.firstName);
     }
-    return 0;
+    return sortDirection === "asc" ? comparison : -comparison;
   });
 
   if (error) {
@@ -98,7 +108,11 @@ const StudentAccountsPage = () => {
           onClick={() => handleSort("studentNumber")}
         >
           Student Number
-          <FaSortNumericUp />
+          {sortBy === "studentNumber" && sortDirection === "asc" ? (
+            <FaSortNumericUp />
+          ) : (
+            <FaSortNumericDown />
+          )}
         </button>
         <button
           key="1"
@@ -106,7 +120,11 @@ const StudentAccountsPage = () => {
           onClick={() => handleSort("name")}
         >
           Name
-          <FaSortAlphaUp />
+          {sortBy === "name" && sortDirection === "asc" ? (
+            <FaSortAlphaUp />
+          ) : (
+            <FaSortAlphaDown />
+          )}
         </button>
       </div>
       <button className="btn btn-primary mb-4">UPLOAD A CSV</button>
