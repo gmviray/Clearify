@@ -1,12 +1,23 @@
 import { useUserStore } from "../../store";
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { apiAxios } from "../../utils";
 import useSWR from 'swr';
 
+const fetcher = url => apiAxios.get(url).then(res => res.data)
+
 const StudentAccountsPage = () => {
     const user = useUserStore((state) => state.user);
+
     if (user.userType != "admin")
         throw new Response("Not Found", { status: 404 });
+
+    const { data, error, isLoading } = useSWR('/students', fetcher);
+
+    if (error) {
+        console.log(error);
+        return <div>idk why this failed.</div>;
+    }
+    if (isLoading) return <div>Loading...</div>;
 
     return (
         <div>
