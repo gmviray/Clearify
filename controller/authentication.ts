@@ -60,7 +60,7 @@ export const createStudent = async (req: Request, res: Response) => {
     return res
         .cookie("token-id", user.createJWT(), {
             httpOnly: true,
-            sameSite: "none",
+            sameSite: "lax",
             maxAge: 7 * 24 * 60 * 60 * 1000,
         })
         .status(StatusCodes.CREATED)
@@ -133,7 +133,7 @@ export const signIn = async (req: Request, res: Response) => {
     return res
         .cookie("token-id", user.createJWT(), {
             httpOnly: true,
-            sameSite: "none",
+            sameSite: "lax",
             maxAge: 7 * 24 * 60 * 60 * 1000,
         })
         .status(StatusCodes.CREATED)
