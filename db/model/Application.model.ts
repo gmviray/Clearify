@@ -9,6 +9,7 @@ interface Remark {
         lastName: string;
         middleName?: string;
         firstName: string;
+        _id: Types.ObjectId;
     };
     stepSubmitted: ApplicationSteps;
     remark: string;
@@ -69,12 +70,18 @@ const applicationSchema = new Schema({
     submission: applicationSubmissionSchema,
     previousSubmissions: [applicationSubmissionSchema],
     adviser: {
-        type: Types.ObjectId,
-        ref: "User",
+        email: String,
+        username: String,
+        lastName: String,
+        middleName: String,
+        firstName: String,
     },
     createdBy: {
-        type: Types.ObjectId,
-        ref: "User",
+        email: String,
+        studentNumber: String,
+        lastName: String,
+        middleName: String,
+        firstName: String,
     },
 });
 
