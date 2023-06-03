@@ -58,6 +58,7 @@ const printAllStudents = () => {
                                     <button className="px-2 py-1 bg-transparent text-primary rounded" onClick={() => handleAssignAdviser(student)}>Assign</button>
                                 )}
                             </td>
+                            < hr/>
                         </tr>
                     ))}
                 </tbody>

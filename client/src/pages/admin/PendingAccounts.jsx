@@ -1,8 +1,64 @@
 import { useUserStore } from "../../store";
+import { useState } from "react";
 import { apiAxios } from "../../utils";
+import useSWR from "swr";
 
 import { FaSortAlphaUp } from 'react-icons/fa';
 import { FaSortNumericUp } from 'react-icons/fa';
+
+const fetcher = (url) => apiAxios.get(url).then((res) => res.data);
+
+const printAllPendings = () => {
+    const { data, error, isLoading } = useSWR('/students/pending', fetcher);
+
+    if (error) {
+        console.log(error);
+        return <div>idk why this failed.</div>;
+    }
+    if (isLoading) return <div>Loading...</div>;
+    const pendings = data.data;
+
+    const [selectedStudent, setSelectedStudent] = useState(null); // State to store the selected student
+
+    const handleAssignAdviser = (student) => {
+        setSelectedStudent(student); // Set the selected student
+    };
+
+    const handleCloseModal = () => {
+        setSelectedStudent(null); // Clear the selected student
+    };
+
+    const handleAssign = () => {
+        // Implement the logic to assign an adviser to the selected student using the selectedStudent object
+        // ...
+        setSelectedStudent(null); // Clear the selected student after assigning the adviser
+    };
+
+    return (
+        <div className="table-container">
+            <table className="table">
+                <thead>
+                    <tr>
+                        <th className="text-primary bg-transparent pr-20">Student Number</th>
+                        <th className="text-primary bg-transparent pr-20">Name</th>
+                        <th className="text-primary bg-transparent pr-20">Email</th>
+                        <th className="text-primary bg-transparent pr-20">Actions   </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {pendings.map((pending) => (
+                        <tr key={pending._id}>
+                            <td>{pending.studentNumber}</td>
+                            <td>{`${pending.firstName} ${pending.lastName}`}</td>
+                            <td>{pending.email}</td>
+                            < hr/>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+        </div>
+    );
+}
 
 const PendingAccountsPage = () => {
     const user = useUserStore((state) => state.user);
@@ -37,6 +93,7 @@ const PendingAccountsPage = () => {
                 <button key='0' className="px-5 py-1 bg-transparent text-primary rounded">Student Number <FaSortNumericUp /></button>
                 <button key='1' className="px-5 py-1 bg-transparent text-primary rounded">Name <FaSortAlphaUp /></button>
             </div>
+            {printAllPendings()}
         </div>
     );
 };
