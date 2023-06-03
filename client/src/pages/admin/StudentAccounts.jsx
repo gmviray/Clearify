@@ -1,21 +1,19 @@
-import { useUserStore } from "../../store";
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { apiAxios } from "../../utils";
-import useSWR, { mutate } from "swr";
-
+import useSWR from "swr";
 import { FaSortAlphaUp, FaSortAlphaDown, FaSortNumericUp, FaSortNumericDown } from 'react-icons/fa';
+import ReactModal from 'react-modal';
 
 const fetcher = (url) => apiAxios.get(url).then((res) => res.data);
 
 const StudentAccountsPage = () => {
-  const user = useUserStore((state) => state.user);
+  const { data: adviserData, error: adviserError } = useSWR("/adviser-names", fetcher);
+  const adviser = adviserData?.data || [];
+  console.log(adviser);
 
-  if (user.userType !== "admin") {
-    throw new Error("Not Found");
-  }
-
-  const { data, error } = useSWR("/students", fetcher);
+  const { data, error, mutate } = useSWR("/students", fetcher);
   const students = data?.data || [];
+  console.log(students);
 
   const [selectedStudent, setSelectedStudent] = useState(null); // State to store the selected student
   const [searchQuery, setSearchQuery] = useState(""); // State to store the search query
@@ -23,17 +21,48 @@ const StudentAccountsPage = () => {
   const [sortDirection, setSortDirection] = useState("asc"); // State to store the sort direction
 
   const handleAssignAdviser = (student) => {
-    setSelectedStudent(student); // Set the selected student
+    setSelectedStudent(student);
   };
 
   const handleCloseModal = () => {
     setSelectedStudent(null); // Clear the selected student
   };
 
-  const handleAssign = () => {
-    // Implement the logic to assign an adviser to the selected student using the selectedStudent object
-    // ...
-    setSelectedStudent(null); // Clear the selected student after assigning the adviser
+  const handleAssign = async () => {
+    try {
+      const adviserUsername = document.getElementById("adviser-dropdown").value;
+
+      const selectedAdviser = adviser.find((adviser) => adviser.username === adviserUsername);
+
+      if (!selectedAdviser) {
+        console.error("Selected adviser not found");
+        return;
+      }
+
+      const updatedStudent = {
+        ...selectedStudent,
+        adviser: {
+          _id: selectedAdviser._id,
+          firstName: selectedAdviser.firstName,
+          lastName: selectedAdviser.lastName,
+        },
+      };
+
+      await apiAxios.post("/student/assign-adviser", {
+        studentNumber: selectedStudent.studentNumber,
+        username: adviserUsername,
+      });
+
+      const updatedStudents = students.map((s) =>
+        s._id === selectedStudent._id ? updatedStudent : s
+      );
+
+      mutate("/students", { data: { data: updatedStudents } }); // Update the students data
+
+      setSelectedStudent(null);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const handleSearch = (e) => {
@@ -69,10 +98,12 @@ const StudentAccountsPage = () => {
     return sortDirection === "asc" ? comparison : -comparison;
   });
 
-  if (error) {
-    console.log(error);
+  if (error || adviserError) {
+    console.log(error || adviserError);
     return <div>idk why this failed.</div>;
   }
+
+  ReactModal.setAppElement('#root'); // Set the root element for ReactModal
 
   return (
     <div>
@@ -142,49 +173,88 @@ const StudentAccountsPage = () => {
             </tr>
           </thead>
           <tbody>
-            {sortedStudents.map((student) => (
-              <tr key={student._id}>
-                <td>{student.studentNumber}</td>
-                <td>{`${student.firstName} ${student.lastName}`}</td>
-                <td>{student.email}</td>
-                <td>
-                  {student.adviser ? (
-                    student.adviser
-                  ) : (
-                    <button
-                      className="px-2 py-1 bg-transparent text-primary rounded"
-                      onClick={() => handleAssignAdviser(student)}
-                    >
-                      Assign
-                    </button>
-                  )}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+            {sortedStudents.map((student) => {
+                // searches for the adviser's username which has the same id that is assigned to the student
+                const assignedAdviser = adviser.find(   
+                (adviser) => adviser._id === student.adviser
+                );
+                return (
+                <React.Fragment key={student._id}>
+                    <tr>
+                    <td>{student.studentNumber}</td>
+                    <td>{`${student.firstName} ${student.lastName}`}</td>
+                    <td>{student.email}</td>
+                    <td>
+                        {assignedAdviser ? (
+                        <span className="text-primary">{assignedAdviser.username}</span>
+                        ) : (
+                        <button
+                            className="px-2 py-1 bg-transparent text-primary rounded"
+                            onClick={() => handleAssignAdviser(student)}
+                        >
+                            Assign
+                        </button>
+                        )}
+                    </td>
+                    </tr>
+                </React.Fragment>
+                );
+            })}
+            </tbody>
 
-        {selectedStudent && (
-          <div className="modal">
-            <div className="modal-content">
-              <h2 className="text-primary">Assign Adviser</h2>
-              <div>
-                <select className="dropdown" placeholder="Search an adviser">
-                  {/* Render the list of advisers here */}
-                </select>
-              </div>
-              <div>
-                <button className="btn btn-primary" onClick={handleAssign}>
-                  Assign
-                </button>
-              </div>
-              <button className="btn btn-secondary" onClick={handleCloseModal}>
-                Close
-              </button>
-            </div>
-          </div>
-        )}
+        </table>
       </div>
+
+      {selectedStudent && (
+        <ReactModal
+            isOpen={selectedStudent !== null}
+            onRequestClose={handleCloseModal}
+            contentLabel="Assign Adviser Modal"
+            className="Modal absolute bg-white rounded-[20px] shadow-lg px-6 py-4 w-2/6" // Adjust the width here (e.g., w-96)
+            overlayClassName="Overlay fixed inset-0 flex items-center justify-center bg-black bg-opacity-50"
+        >
+            <div className="flex justify-end">
+            <button
+                className="btn-primary text-white p-1 rounded-full absolute top-3 right-3"
+                onClick={handleCloseModal}
+            >
+                <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                >
+                <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M6 18L18 6M6 6l12 12"
+                />
+                </svg>
+            </button>
+            </div>
+            <h2 className="text-primary text-xl font-bold mb-4">Assign Adviser</h2>
+            <div className="flex items-center mb-4">
+            <label htmlFor="adviser-dropdown" className="mr-2">
+                Adviser:
+            </label>
+            <select
+                id="adviser-dropdown"
+                className="px-2 my-3 py-1 border border-gray-300 rounded w-full"
+            >
+                {adviser.map((adviser) => (
+                <option key={adviser.username} value={adviser.username}>
+                    {`${adviser.firstName} ${adviser.lastName}`}
+                </option>
+                ))}
+            </select>
+            </div>
+            <button className="btn btn-primary" onClick={handleAssign}>
+            Assign
+            </button>
+        </ReactModal>
+        )}
     </div>
   );
 };
