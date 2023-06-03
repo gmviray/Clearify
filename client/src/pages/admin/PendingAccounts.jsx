@@ -1,4 +1,5 @@
 import { useUserStore } from "../../store";
+import { apiAxios } from "../../utils";
 
 const PendingAccountsPage = () => {
     const user = useUserStore((state) => state.user);

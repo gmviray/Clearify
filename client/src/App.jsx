@@ -6,15 +6,19 @@ import React from "react";
 // Admin Pages
 import { ApproverAccountsPage, StudentAccountsPage } from "./pages/admin";
 
+// Approver Pages
+import { ApplicationPage } from "./pages/approver";
+
 const router = createBrowserRouter([
     {
         path: "/",
         element: <MainPage />,
         errorElement: <ErrorBoundary />,
         children: [
-            { path: "/", element: <HomePage /> },
-            { path: "/students", element: <StudentAccountsPage /> },
-            { path: "/approvers", element: <ApproverAccountsPage /> },
+            { index: true, element: <HomePage /> },
+            { path: "students", element: <StudentAccountsPage /> },
+            { path: "approvers", element: <ApproverAccountsPage /> },
+            { path: "application/:id", element: <ApplicationPage /> },
         ],
     },
     { path: "/sign-in", element: <SignInPage /> },

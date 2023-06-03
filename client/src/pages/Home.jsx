@@ -1,10 +1,18 @@
 import { useUserStore } from "../store";
 import { PendingAccountsPage } from "./admin";
+import { PendingApplicationsPage } from "./approver";
 
 const HomePage = () => {
     const user = useUserStore((state) => state.user);
 
-    if (user.userType == "admin") return <PendingAccountsPage />;
+    switch (user.userType) {
+        case "admin":
+            return <PendingAccountsPage />;
+        case "approver":
+            return <PendingApplicationsPage />;
+        default:
+            return <div></div>;
+    }
 };
 
 export default HomePage;
