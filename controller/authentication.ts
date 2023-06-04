@@ -110,9 +110,6 @@ export const signIn = async (req: Request, res: Response) => {
             studentNumber: user.studentNumber,
             email,
             userType: user.userType,
-            adviser: user.adviser,
-            application: user.application,
-            verified: user.verified,
         };
     else if (user.userType == "approver")
         message = {
