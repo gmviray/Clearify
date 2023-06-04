@@ -1,5 +1,6 @@
 import { Router } from "express";
 import {
+    approveApplication,
     getApplication,
     getPendingAdviserApplications,
     getPendingOfficerApplications,
@@ -16,12 +17,13 @@ router.get(
 );
 
 router.get(
-    "/adviser/:id/pending",
+    "/adviser/pending",
     approverMiddleware,
     getPendingAdviserApplications
 );
 
 router.get("/application/:id", approverMiddleware, getApplication);
-router.post("/application/:id", approverMiddleware, rejectApplication);
+router.post("/application/approve", approverMiddleware, approveApplication);
+router.post("/application/reject", approverMiddleware, rejectApplication);
 
 export default router;
