@@ -64,10 +64,15 @@ const ApproverAccountsPage = () => {
   useEffect(() => {
     // Reset the form values when the editApprover state changes
     reset(editApprover);
-  }, [editApprover, reset]);
+    setEditApprover(null);
+  }, [editApprover, reset, createModalIsOpen]);
 
   const handleCreateModalOpen = () => {
+    reset();
+    setEditApprover(null);
+    console.log(editApprover)
     setCreateModalIsOpen(true);
+      // Reset the form fields
   };
   
   const onCreateSubmit = async (formData) => {
@@ -90,7 +95,7 @@ const ApproverAccountsPage = () => {
   const sortedApprovers = filteredApprovers.sort((a, b) => {
     let comparison = 0;
     if (sortBy === "name") {
-      comparison = a.lastName.localeCompare(b.lastName);
+      comparison = a.firstName.localeCompare(b.firstName);
     }
     return sortDirection === "asc" ? comparison : -comparison;
   });
@@ -265,35 +270,35 @@ const ApproverAccountsPage = () => {
                <div className="flex mb-4">
                 <div className="mr-4">
                     <label htmlFor="username" className="py-2 block mb-1 text-primary font-bold">Username</label>
-                    <input type="text" className="border-2 rounded-md py-2" placeholder="Enter a username" id="username2" {...register("username", {required: true})} />
+                    <input type="text" className="border-2 rounded-md py-2" placeholder="Enter a username" id="username" {...register("username", {required: true})} />
                 </div>
                 <div className="px-8">
                     <label htmlFor="email" className="py-2 block mb-1 text-primary font-bold">UP Mail</label>
-                    <input type="email" className="border-2 rounded-md py-2" placeholder="Enter a UP mail" id="email2" {...register("email", {required: true})} />
+                    <input type="email" className="border-2 rounded-md py-2" placeholder="Enter a UP mail" id="email" {...register("email", {required: true})} />
                 </div>
               </div>
               <div className="flex mb-4">
                 <div className="mr-4">
                   <label htmlFor="firstName" className="py-2 block mb-1 text-primary font-bold">First Name</label>
-                  <input type="text" className="border-2 rounded-md py-2" placeholder="Enter a first name" id="firstName2" {...register("firstName", {required: true,})} />
+                  <input type="text" className="border-2 rounded-md py-2" placeholder="Enter a first name" id="firstName" {...register("firstName", {required: true,})} />
                 </div>
                 <div className="px-8">
                   <label htmlFor="middleName" className="py-2 block mb-1 text-primary font-bold">Middle Name</label>
-                  <input type="text" className="border-2 rounded-md py-2" placeholder="Enter a middle name" id="middleName2" {...register("middleName", {required: false,})} />
+                  <input type="text" className="border-2 rounded-md py-2" placeholder="Enter a middle name" id="middleName" {...register("middleName", {required: false,})} />
                 </div>
               </div>
               <div className="flex mb-4">
                 <div className="mr-4">
                   <label htmlFor="lastName" className="py-2 block mb-1 text-primary font-bold">Last Name</label>
-                  <input type="text" className="border-2 rounded-md py-2" placeholder="Enter a last name" id="lastName2" {...register("lastName", {required: true,})} />
+                  <input type="text" className="border-2 rounded-md py-2" placeholder="Enter a last name" id="lastName" {...register("lastName", {required: true,})} />
                 </div>
                 <div className="px-8">
                   <label htmlFor="password" className="py-2 block mb-1 text-primary font-bold">Password</label>
-                  <input type="password" className="border-2 rounded-md py-2" placeholder="Enter a password" id="password2" {...register("password", {required: true,})} />
+                  <input type="password" className="border-2 rounded-md py-2" placeholder="Enter a password" id="password" {...register("password", {required: true,})} />
                 </div>
               </div>
               <div className="flex items-center mb-4 py-2">
-                <input type="checkbox" className="h-5 w-5" id="clearanceOfficer2" {...register("clearanceOfficer")} defaultChecked={editApprover?.clearanceOfficer} />
+                <input type="checkbox" className="h-5 w-5" id="clearanceOfficer" {...register("clearanceOfficer")} />
                 <label htmlFor="clearanceOfficer" className="ml-2">Mark/Remove as Clearance Officer</label>
               </div>
               <div className="text-center">
