@@ -1,19 +1,31 @@
 import type { Request, Response } from "express";
 import { ApplicationModel, UserModel } from "../db/model";
 import { StatusCodes } from "http-status-codes";
-import { APIError, makeAPIResponse } from "../utils";
-import { Types } from "mongoose";
+import { APIError, decodeJWT, makeAPIResponse } from "../utils";
 
 export const getPendingAdviserApplications = async (
     req: Request,
     res: Response
 ) => {
-    const { id } = req.params;
+    const token = req.cookies["token-id"];
+
+    const decoded = decodeJWT(token);
+
+    const adviser = await UserModel.findOne({
+        _id: decoded.id,
+        userType: "approver",
+    }).select("username");
+
+    if (!adviser)
+        throw new APIError(
+            { adviser: "Adviser does not exist." },
+            StatusCodes.BAD_REQUEST
+        );
 
     const pendingApplications = await ApplicationModel.find({
         step: 1,
         status: "open",
-        adviser: id,
+        "adviser.username": adviser.username,
     }).select("createdBy adviser");
 
     return res
@@ -110,7 +122,7 @@ export const approveApplication = async (req: Request, res: Response) => {
 };
 
 export const rejectApplication = async (req: Request, res: Response) => {
-    const { id, remark, commenterUsername } = req.body;
+    const { id, remark, username } = req.body;
 
     const application = await ApplicationModel.findOne({
         _id: id,
@@ -124,7 +136,7 @@ export const rejectApplication = async (req: Request, res: Response) => {
         );
 
     const commenter = await UserModel.findOne({
-        username: commenterUsername,
+        username,
     }).select("email username middleName firstName lastName");
 
     if (!commenter)
@@ -153,7 +165,6 @@ export const rejectApplication = async (req: Request, res: Response) => {
             break;
         case 3:
             application.step = 4;
-            application.status = "completed";
             break;
     }
 
@@ -164,7 +175,7 @@ export const rejectApplication = async (req: Request, res: Response) => {
         .json(
             makeAPIResponse(
                 {},
-                "Successfully approved application at the current step.",
+                "Successfully rejected application at the current step.",
                 StatusCodes.OK
             )
         );

@@ -26,7 +26,7 @@ export const createApplication = async (req: Request, res: Response) => {
         "firstName middleName lastName email username"
     );
 
-    const existingApplication = await ApplicationModel.find({
+    const existingApplication = await ApplicationModel.findOne({
         "createdBy.studentNumber": student.studentNumber,
         status: "open",
     });
