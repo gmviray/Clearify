@@ -318,16 +318,16 @@ export const deleteApprover = async (req: Request, res: Response) => {
 };
 
 export const editApprover = async (req: Request, res: Response) => {
-    const {
-        firstName,
-        lastName,
-        email,
-        middleName,
-        clearanceOfficer,
-        password,
-    } = req.body;
+    const { username } = req.params;
+    if (!username)
+        throw new APIError(
+            "Failed to access username param",
+            StatusCodes.BAD_REQUEST
+        );
+    const { firstName, lastName, middleName, clearanceOfficer, password } =
+        req.body;
 
-    const approver = await UserModel.findOne({ email });
+    const approver = await UserModel.findOne({ username });
 
     if (!approver)
         throw new APIError(
@@ -348,7 +348,8 @@ export const editApprover = async (req: Request, res: Response) => {
             );
         approver.password = password;
     }
-    if (clearanceOfficer) approver.clearanceOfficer = clearanceOfficer;
+    if (clearanceOfficer != undefined)
+        approver.clearanceOfficer = clearanceOfficer;
 
     await approver.save({ validateModifiedOnly: true });
 
