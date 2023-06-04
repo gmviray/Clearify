@@ -73,7 +73,9 @@ const UserSchema = new Schema({
     clearanceOfficer: {
         type: Boolean,
         validate: {
-            validator: async function (_: string) {
+            validator: async function (value: boolean) {
+                if (!value) return true;
+
                 const user = await model("user").findOne({
                     clearanceOfficer: true,
                 });
