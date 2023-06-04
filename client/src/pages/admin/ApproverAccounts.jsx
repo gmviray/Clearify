@@ -23,7 +23,7 @@ const ApproverAccountsPage = () => {
   const [editApprover, setEditApprover] = useState(null);
   const [editModalIsOpen, setEditModalIsOpen] = useState(false);
 
-  const { register, handleSubmit, reset } = useForm();
+  const { register, handleSubmit, setValue, reset } = useForm();
 
   const handleSearch = (e) => {
     setSearchQuery(e.target.value);
