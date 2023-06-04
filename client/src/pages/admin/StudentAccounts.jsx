@@ -15,6 +15,7 @@ const StudentAccountsPage = () => {
   const [selectedStudent, setSelectedStudent] = useState(null); // State to store the selected student
   const [searchQuery, setSearchQuery] = useState(""); // State to store the search query
   const [sortBy, setSortBy] = useState(""); // State to store the sort field
+  const [sortField, setSortField] = useState(""); // State to store the active sort field
   const [sortDirection, setSortDirection] = useState("asc"); // State to store the sort direction
 
   const handleAssignAdviser = (student) => {
@@ -75,6 +76,7 @@ const StudentAccountsPage = () => {
     } else {
       // If a different field is clicked, set the sort field and direction
       setSortBy(field);
+      setSortField(field); // Update the active sort field
       setSortDirection("asc");
     }
   };
@@ -130,26 +132,34 @@ const StudentAccountsPage = () => {
       <div className="flex space-x-5 text-sm text-red-500 mb-6">
         <button
           key="0"
-          className="px-2 py-1 bg-transparent text-primary rounded"
+          className={`px-2 py-1 bg-transparent text-primary rounded ${sortField === 'studentNumber' ? 'text-primary' : ''}`}
           onClick={() => handleSort("studentNumber")}
         >
           Student Number
-          {sortBy === "studentNumber" && sortDirection === "asc" ? (
-            <FaSortNumericUp />
-          ) : (
-            <FaSortNumericDown />
+          {sortField === "studentNumber" && (
+            <>
+              {sortDirection === "asc" ? (
+                <FaSortNumericUp />
+              ) : (
+                <FaSortNumericDown />
+              )}
+            </>
           )}
         </button>
         <button
           key="1"
-          className="px-2 py-1 bg-transparent text-primary rounded"
+          className={`px-2 py-1 bg-transparent text-primary rounded ${sortField === 'name' ? 'text-primary' : ''}`}
           onClick={() => handleSort("name")}
         >
           Name
-          {sortBy === "name" && sortDirection === "asc" ? (
-            <FaSortAlphaUp />
-          ) : (
-            <FaSortAlphaDown />
+          {sortField === "name" && (
+            <>
+              {sortDirection === "asc" ? (
+                <FaSortAlphaUp />
+              ) : (
+                <FaSortAlphaDown />
+              )}
+            </>
           )}
         </button>
       </div>
