@@ -1,5 +1,5 @@
 import { useUserStore } from "../../store";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { apiAxios } from "../../utils";
 import useSWR, { mutate } from "swr";
 
@@ -18,7 +18,7 @@ const PendingAccountsPage = () => {
   const [sortBy, setSortBy] = useState(null);
   const [sortOrder, setSortOrder] = useState('asc');
   const [searchKeyword, setSearchKeyword] = useState('');
-  
+
   const handleSort = (key) => {
     if (sortBy === key) {
       setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
@@ -100,25 +100,25 @@ const PendingAccountsPage = () => {
         </button>
       </div>
       <div className="flex space-x-2 text-sm text-red-500 mb-6">
-        <button key='0' className="px-5 py-1 bg-transparent text-primary rounded">
-          <button
-            className="sorting-button"
-            onClick={() => handleSort('studentNumber')}
-          >
-            Student Number {sortBy === 'studentNumber' && (
-              sortOrder === 'asc' ? <FaSortNumericUp /> : <FaSortNumericDown />
-            )}
-          </button>
+        <button
+          key='0'
+          className={`px-5 py-1 bg-transparent text-primary rounded ${sortBy === 'studentNumber' ? 'sorting-button-active' : ''}`}
+          onClick={() => handleSort('studentNumber')}
+        >
+          <span className="sorting-button-text">Student Number</span>
+          {sortBy === 'studentNumber' && (
+            sortOrder === 'asc' ? <FaSortNumericUp className="sorting-icon" /> : <FaSortNumericDown className="sorting-icon" />
+          )}
         </button>
-        <button key='1' className="px-5 py-1 bg-transparent text-primary rounded">
-          <button
-            className="sorting-button"
-            onClick={() => handleSort('firstName')}
-          >
-            Name {sortBy === 'firstName' && (
-              sortOrder === 'asc' ? <FaSortAlphaUp /> : <FaSortAlphaDown />
-            )}
-          </button>
+        <button
+          key='1'
+          className={`px-5 py-1 bg-transparent text-primary rounded ${sortBy === 'firstName' ? 'sorting-button-active' : ''}`}
+          onClick={() => handleSort('firstName')}
+        >
+          <span className="sorting-button-text">Name</span>
+          {sortBy === 'firstName' && (
+            sortOrder === 'asc' ? <FaSortAlphaUp className="sorting-icon" /> : <FaSortAlphaDown className="sorting-icon" />
+          )}
         </button>
       </div>
       <div className="table-container">
