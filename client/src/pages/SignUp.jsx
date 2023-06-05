@@ -15,6 +15,7 @@ const SignUpPage = () => {
     } = useForm();
 
     const user = useUserStore((state) => state.user);
+    const setUser = useUserStore((state) => state.setUser);
 
     const navigate = useNavigate();
 
@@ -25,14 +26,14 @@ const SignUpPage = () => {
     const onSubmit = async (data) => {
         try {
             const resp = await apiAxios.post("/sign-up", data);
+            setUser(resp.data.data);
             navigate("/");
         } catch (err) {
-            console.log(err.response.data);
-            // err.response.data.errors.forEach((item) => {
-            //     const [key, value] = Object.entries(item)[0];
+            err.response.data.errors.forEach((item) => {
+                const [key, value] = Object.entries(item)[0];
 
-            //     setError(key, { type: "custom", message: value });
-            // });
+                setError(key, { type: "custom", message: value });
+            });
         }
     };
 
