@@ -60,10 +60,10 @@ export const getPendingOfficerApplications = async (
 };
 
 export const getApplication = async (req: Request, res: Response) => {
-    const { id } = req.params;
+    const { studentNumber } = req.params;
 
     const application = await ApplicationModel.findOne({
-        _id: id,
+        "createdBy.studentNumber": studentNumber,
         status: "open",
     });
 

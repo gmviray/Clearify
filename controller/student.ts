@@ -122,7 +122,7 @@ export const resubmitApplication = async (req: Request, res: Response) => {
                 remark,
                 date: new Date(),
             });
-            application.step = 1;
+            application.step = 3;
             break;
     }
 

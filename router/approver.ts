@@ -22,7 +22,7 @@ router.get(
     getPendingAdviserApplications
 );
 
-router.get("/application/:id", approverMiddleware, getApplication);
+router.get("/application/:studentNumber", approverMiddleware, getApplication);
 router.post("/application/approve", approverMiddleware, approveApplication);
 router.post("/application/reject", approverMiddleware, rejectApplication);
 
