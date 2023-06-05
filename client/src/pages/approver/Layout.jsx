@@ -2,7 +2,7 @@ import { Outlet, NavLink } from "react-router-dom";
 import { useUserStore } from "../../store";
 
 // Icons
-import { FaClock, FaUserGraduate, FaUserSecret } from "react-icons/fa";
+import { FaClock } from "react-icons/fa";
 
 const ApproverLayout = () => {
     const signOut = useUserStore((state) => state.signOut);
@@ -16,7 +16,7 @@ const ApproverLayout = () => {
                     type="checkbox"
                     className="drawer-toggle"
                 />
-                <div className="drawer-content lg:py-20 lg:px-10">
+                <div className="drawer-content lg:py-10 lg:px-10">
                     <Outlet />
                     <label
                         htmlFor="my-drawer-2"
@@ -25,7 +25,7 @@ const ApproverLayout = () => {
                         Open drawer
                     </label>
                 </div>
-                <div className="drawer-side bg-base-200 ">
+                <div className="drawer-side bg-base-200">
                     <label
                         htmlFor="my-drawer-2"
                         className="drawer-overlay"
@@ -56,11 +56,24 @@ const ApproverLayout = () => {
                             </NavLink>
                         </li>
                         <li className="my-10"></li>
-
-                        <button className="btn btn-primary" onClick={signOut}>
+                    </ul>
+                    <div className="flex flex-col items-center mt-80 mb-5 w-full px-4">
+                        <p className="">
+                            Welcome back{" "}
+                            <span className="text-primary">
+                                {user.firstName}!
+                            </span>
+                        </p>
+                        <p className="text-sm text-primary mb-10">
+                            {user.email}
+                        </p>
+                        <button
+                            className="btn btn-primary w-full"
+                            onClick={signOut}
+                        >
                             Sign Out
                         </button>
-                    </ul>
+                    </div>
                 </div>
             </div>
         </main>
