@@ -2,7 +2,7 @@ import img from "../../assets/img/pendingAccount.svg";
 
 const PendingAccountPage = ({ onClick }) => {
     return (
-        <>
+        <section className="h-screen w-full flex flex-col items-center justify-center gap-4 px-5">
             <img
                 src={img}
                 alt="Women waiting on the bench"
@@ -18,7 +18,7 @@ const PendingAccountPage = ({ onClick }) => {
             <button onClick={onClick} className="btn btn-primary">
                 Sign Out
             </button>
-        </>
+        </section>
     );
 };
 
