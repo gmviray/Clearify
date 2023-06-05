@@ -52,7 +52,7 @@ const SignInPage = () => {
         <div className="container mx-auto px-5">
             <div className="hero min-h-screen">
                 <div className="hero-content w-full flex-col lg:flex-row">
-                <div className="text-center">
+                    <div className="text-center">
                         <img
                             className="w-full object-contain sm:w-auto"
                             src={signUpSvg}
@@ -60,9 +60,9 @@ const SignInPage = () => {
                         <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mt-4 md:mt-6 lg:mt-8 text-primary">
                             Welcome Back
                         </h1>
-                        <h3 className="text-base md:text-lg lg:text-xl font-bold mt-6 md:mt-8 lg:mt-10">
+                        <p className="text-base mt-2">
                             Sign in to your account to view your application.
-                        </h3>
+                        </p>
                     </div>
                     <div className="card flex-shrink-0 shadow-md bg-base-100 flex flex-col">
                         <div className="card-body">
