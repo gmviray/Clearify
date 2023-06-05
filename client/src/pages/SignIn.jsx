@@ -44,8 +44,6 @@ const SignInPage = () => {
                 });
             return;
         }
-
-        console.log(response);
     };
 
     return (
