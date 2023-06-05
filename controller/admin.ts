@@ -183,13 +183,14 @@ export const assignAdviser = async (req: Request, res: Response) => {
 };
 
 export const assignAdvisers = async (req: Request, res: Response) => {
-    const { data }: { data: { studentNumber: string; username: string }[] } =
-        req.body;
+    const { data }: { data: [string, string][] } = req.body;
 
     const errors = [];
 
-    for (const { studentNumber, username } of data) {
-        const adviser = await UserModel.findOne({ username });
+    for (const [studentNumber, username] of data) {
+        const adviser = await UserModel.findOne({
+            username: { $regex: `^${username}$`, $options: "i" },
+        });
 
         if (!adviser) {
             errors.push({
@@ -197,6 +198,7 @@ export const assignAdvisers = async (req: Request, res: Response) => {
             });
             continue;
         }
+
         const student = await UserModel.updateOne(
             { studentNumber },
             { adviser: adviser._id }
@@ -208,16 +210,16 @@ export const assignAdvisers = async (req: Request, res: Response) => {
             });
     }
 
-    res.status(StatusCodes.OK);
-
     if (errors.length)
-        return res.json(
-            makeAPIResponse(
-                { errors: errors },
-                "Failed to assign adviser to some of the students due to the following errors.",
-                StatusCodes.OK
-            )
-        );
+        return res
+            .status(StatusCodes.BAD_REQUEST)
+            .json(
+                makeAPIResponse(
+                    { errors: errors },
+                    "Failed to assign adviser to some of the students due to the following errors.",
+                    StatusCodes.BAD_REQUEST
+                )
+            );
 
     return res
         .status(StatusCodes.OK)

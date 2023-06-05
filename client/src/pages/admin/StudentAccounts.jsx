@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import { apiAxios } from "../../utils";
-import useSWR from "swr";
+import useSWR, { useSWRConfig } from "swr";
 import {
     FaSortAlphaUp,
     FaSortAlphaDown,
     FaSortNumericUp,
     FaSortNumericDown,
 } from "react-icons/fa";
+import CSVReader from "react-csv-reader";
 
 const fetcher = (url) => apiAxios.get(url).then((res) => res.data);
 
@@ -180,7 +181,8 @@ const StudentAccountsPage = () => {
                     )}
                 </button>
             </div>
-            <button className="btn btn-primary mb-4">UPLOAD A CSV</button>
+
+            <UploadCSV />
 
             <div className="table-container">
                 <table className="table">
@@ -293,6 +295,54 @@ const StudentAccountsPage = () => {
                 </div>
             )}
         </div>
+    );
+};
+
+const UploadCSV = () => {
+    const [data, setData] = useState([]);
+    const [failed, setFailed] = useState(false);
+
+    const { mutate } = useSWRConfig();
+
+    const handleUpload = async () => {
+        try {
+            const resp = await apiAxios.post("/students/assign-adviser", {
+                data: data,
+            });
+            setData([]);
+            setFailed(false);
+            mutate("/students");
+        } catch (err) {
+            setFailed(true);
+            setData([]);
+        }
+    };
+
+    return (
+        <>
+            <div className="flex flex-col gap-2 my-5">
+                <h3 className="text-lg font-bold">Upload CSV</h3>
+
+                <CSVReader
+                    onFileLoaded={async (data, fileInfo, originalFile) => {
+                        setData(data);
+                        setFailed(false);
+                    }}
+                    parserOptions={{ skipEmptyLines: true }}
+                    cssInputClass="file-input file-input-ghost w-full max-w-xs"
+                />
+                <button
+                    className="btn btn-primary max-w-xs"
+                    onClick={handleUpload}
+                    disabled={!data.length}
+                >
+                    Assign
+                </button>
+                {failed ? (
+                    <p className="text-error">Failed to update some items.</p>
+                ) : undefined}
+            </div>
+        </>
     );
 };
 
