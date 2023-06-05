@@ -27,6 +27,9 @@ export default create()(
                     set((_) => ({ user: undefined }));
                 } catch (err) {}
             },
+            setUser: (user) => {
+                set((_) => ({ user }));
+            },
         }),
         {
             name: "user-storage",

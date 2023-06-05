@@ -47,10 +47,22 @@ const SignInPage = () => {
     };
 
     return (
-        <div className="container mx-auto lg:px-5">
+        <div className="container mx-auto px-5">
             <div className="hero min-h-screen">
                 <div className="hero-content w-full flex-col lg:flex-row">
-                    <div className="card flex-1 shadow-lg">
+                    <div className="text-center">
+                        <img
+                            className="w-full object-contain sm:w-auto"
+                            src={signUpSvg}
+                        />
+                        <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mt-4 md:mt-6 lg:mt-8 text-primary">
+                            Welcome Back
+                        </h1>
+                        <p className="text-base mt-2">
+                            Sign in to your account to view your application.
+                        </p>
+                    </div>
+                    <div className="card flex-shrink-0 shadow-md bg-base-100 flex flex-col">
                         <div className="card-body">
                             <form
                                 onSubmit={handleSubmit(onSubmit)}
@@ -65,7 +77,7 @@ const SignInPage = () => {
                                     <input
                                         type="text"
                                         placeholder="UP Mail"
-                                        className="input input-bordered"
+                                        className="input input-bordered w-full sm:w-auto"
                                         id="email"
                                         {...register("emailInput", {
                                             required: {
@@ -92,7 +104,7 @@ const SignInPage = () => {
                                     <input
                                         type="password"
                                         placeholder="Enter your password"
-                                        className="input input-bordered"
+                                        className="input input-bordered w-full sm:w-auto"
                                         id="password"
                                         {...register("passwordInput", {
                                             required: {
@@ -125,19 +137,6 @@ const SignInPage = () => {
                                 </div>
                             </form>
                         </div>
-                    </div>
-                    <div className="hidden lg:block flex-1 text-center flex flex-col items-center">
-                        <img
-                            className="h-full w-lg"
-                            src={signUpSvg}
-                            alt="A person near a tree waving back at you."
-                        />
-                        <h1 className="text-5xl font-bold mt-6 text-primary font-bold">
-                            Welcome Back
-                        </h1>
-                        <h3 className="mt-6">
-                            Sign in to your account to view your application.
-                        </h3>
                     </div>
                 </div>
             </div>
