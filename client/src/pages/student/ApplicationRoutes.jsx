@@ -4,6 +4,7 @@ import adviserRemarksSVG from "../../assets/img/remarks.svg";
 import pendingClearanceSVG from "../../assets/img/pendingClearance.svg";
 import clearanceApproved from "../../assets/img/approved.svg";
 import { useSWRConfig } from "swr";
+import { usePDF, Document, Page, PDFDownloadLink, Text, View, StyleSheet, Font } from '@react-pdf/renderer';
 
 const ApplicationRoutes = ({ application }) => {
     switch (application.step) {
@@ -139,9 +140,11 @@ const ApplicationRoutes = ({ application }) => {
                         Goodluck on your next journey in life.
                     </h3>
 
-                    <button className="btn btn-primary mt-8 sm:mt-10 px-4 py-2 sm:px-6 sm:py-3">
-                        PRINT CLEARANCE
-                    </button>
+                    <PDFDownloadLink className="btn btn-primary mt-8 sm:mt-10 px-4 py-2 sm:px-6 sm:py-3" document={<MyDoc application={application}/>} fileName="clearance.pdf">
+                    {({ blob, url, loading, error }) =>
+                        loading ? 'Loading document...' : 'PRINT CLEARANCE'
+                    }
+                    </PDFDownloadLink>
                 </div>
             );
     }
@@ -168,3 +171,7 @@ const DeleteButton = () => {
         </button>
     );
 };
+const MyDoc = () => (
+    <Document>
+  </Document>
+  );
