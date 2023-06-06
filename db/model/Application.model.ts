@@ -30,6 +30,13 @@ interface IApplicationSchema extends Document {
     previousSubmissions: ApplicationSubmission[];
     adviser: Types.ObjectId;
     createdBy: Types.ObjectId;
+    clearedBy: {
+        email: String;
+        username: String;
+        lastName: String;
+        middleName: String;
+        firstName: String;
+    };
 }
 
 const remarkSchema = new Schema({
@@ -77,6 +84,13 @@ const applicationSchema = new Schema({
         firstName: String,
     },
     createdBy: {
+        email: String,
+        studentNumber: String,
+        lastName: String,
+        middleName: String,
+        firstName: String,
+    },
+    clearedBy: {
         email: String,
         studentNumber: String,
         lastName: String,

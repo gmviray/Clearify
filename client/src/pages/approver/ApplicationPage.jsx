@@ -5,9 +5,8 @@ import { apiAxios } from "../../utils";
 import useSWR, { useSWRConfig } from "swr";
 
 // Icons
-import { FaArrowLeft, FaLink, FaUser, FaUserTie } from "react-icons/fa";
-import { MdInsertComment, MdEmail } from "react-icons/md";
-import { BsCalendarDateFill } from "react-icons/bs";
+import { FaArrowLeft, FaUser, FaUserTie } from "react-icons/fa";
+import { MdEmail } from "react-icons/md";
 
 // Global state
 import { useUserStore } from "../../store";
@@ -24,7 +23,6 @@ const ApplicationPage = () => {
     const navigate = useNavigate();
     const { mutate } = useSWRConfig();
     const user = useUserStore((state) => state.user);
-    const [remark, setRemarks] = useState("");
 
     if (user.userType != "approver")
         throw new Response("Not Found", { status: 404 });
@@ -33,36 +31,12 @@ const ApplicationPage = () => {
 
     if (error) return <div>error</div>;
 
-    const { createdBy, adviser, submission, previousSubmissions, _id } =
-        data.data;
-
-    const studentRemarks = submission.remarks.filter(
-        (item) => item.username === undefined
-    );
-
-    const rejectApplication = async () => {
-        if (!remark.length) return;
-
-        try {
-            const resp = await apiAxios.post(`/application/reject`, {
-                id: _id,
-                remark,
-                username: user.username,
-            });
-
-            if (user.clearanceOfficer) mutate("/officer/pending");
-            else mutate("/adviser/pending");
-
-            navigate("/");
-        } catch (err) {
-            console.log(err);
-        }
-    };
+    const { createdBy, adviser, submission, previousSubmissions } = data.data;
 
     const approveApplication = async () => {
         try {
             const resp = await apiAxios.post(`/application/approve`, {
-                id: _id,
+                id,
             });
 
             if (user.clearanceOfficer) mutate("/officer/pending");
@@ -87,7 +61,7 @@ const ApplicationPage = () => {
                     Clearance Application{" "}
                     <span className="text-primary">#{id}</span>
                 </h1>
-                <div className="grid grid-rows-2 grid-flow-col gap-2">
+                <div className="grid grid-rows-4 md:grid-rows-2 grid-flow-col gap-2">
                     <div className="flex items-center gap-4">
                         <h3 className="font-bold text-accent flex items-center gap-2">
                             <FaUser className="text-sm" />
@@ -138,7 +112,7 @@ const ApplicationPage = () => {
             </div>
             <div className="flex flex-col gap-4">
                 <h3 className="text-neutral text-3xl font-bold">Submission</h3>
-                <Submission item={submission} user={user} />
+                <Submission item={submission} user={createdBy} />
                 <div className="flex items-center gap-4">
                     <button
                         className="btn btn-primary"
@@ -166,58 +140,12 @@ const ApplicationPage = () => {
                                 <Submission
                                     key={item._id}
                                     item={item}
-                                    user={user}
+                                    user={createdBy}
                                 />
                             ))}
                     </div>
                 </div>
             ) : undefined}
-
-            <input
-                type="checkbox"
-                id="remarks-submission"
-                className="modal-toggle"
-                onClick={() => {
-                    if (remark.length) setRemarks("");
-                }}
-            />
-            <label
-                className="modal cursor-pointer"
-                htmlFor="remarks-submission"
-            >
-                <label className="modal-box md:px-10 md:py-8 w-11/12 max-w-5xl h-1/2">
-                    <label
-                        htmlFor="remarks-submission"
-                        className="btn btn-sm btn-circle btn-primary absolute right-5 top-5 text-xl"
-                        onClick={() => {
-                            if (remark.length) setRemarks("");
-                        }}
-                    >
-                        ✕
-                    </label>
-                    <h3 className="font-bold md:text-xl text-primary mb-3">
-                        Leave Remarks
-                    </h3>
-                    <textarea
-                        type="text"
-                        placeholder="Add your remarks here"
-                        className="textarea textarea-bordered w-full h-2/3"
-                        value={remark}
-                        onChange={(e) => setRemarks(e.currentTarget.value)}
-                    ></textarea>
-                    <div className="modal-action justify-start">
-                        {remark.length ? (
-                            <label
-                                htmlFor="remarks-submission"
-                                className="btn btn-primary"
-                                onClick={rejectApplication}
-                            >
-                                Submit
-                            </label>
-                        ) : undefined}
-                    </div>
-                </label>
-            </label>
         </section>
     );
 };
