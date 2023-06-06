@@ -17,21 +17,49 @@ const ApproverLayout = () => {
                     className="drawer-toggle"
                 />
                 <div className="drawer-content lg:py-10 lg:px-10">
-                    <Outlet />
-                    <label
+                    <div className="navbar bg-base-100 lg:hidden shadow-md">
+                        <div className="flex-none">
+                            <label
+                                className="btn btn-square btn-ghost"
+                                htmlFor="my-drawer-2"
+                            >
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    className="inline-block w-5 h-5 stroke-current"
+                                >
+
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth="2"
+                                        d="M4 6h16M4 12h16M4 18h16"
+                                    ></path>
+                                </svg>
+                            </label>
+                        </div>
+                        <div className="flex-1">
+                            <h1 className="font-bold text-xl">Clearify</h1>
+                        </div>
+                    </div>
+                    <div className="p-5">
+                        <Outlet />
+                    </div>
+                    {/* <label
                         htmlFor="my-drawer-2"
                         className="btn btn-primary drawer-button lg:hidden"
                     >
                         Open drawer
-                    </label>
+                    </label> */}
                 </div>
-                <div className="drawer-side bg-base-200">
+                <div className="drawer-side">
                     <label
                         htmlFor="my-drawer-2"
                         className="drawer-overlay"
                     ></label>
 
-                    <ul className="menu p-4 w-80">
+                    <ul className="menu p-4 w-80 bg-base-100 lg:bg-base-200">
                         <div className="px-4 py-8">
                             <h3 className="text-2xl font-bold text-primary flex items-center">
                                 Dash
@@ -46,8 +74,7 @@ const ApproverLayout = () => {
                         <li>
                             <NavLink
                                 className={({ isActive }) =>
-                                    `${
-                                        isActive ? "active" : ""
+                                    `${isActive ? "active" : ""
                                     } flex items-center`
                                 }
                                 to="/"
@@ -55,25 +82,26 @@ const ApproverLayout = () => {
                                 <FaClock /> Pending Applications
                             </NavLink>
                         </li>
-                        <li className="my-10"></li>
+                        <li className="my-10">
+                            <div className="flex flex-col items-center mt-80 mb-5 w-full px-4">
+                                <p className="">
+                                    Welcome back{" "}
+                                    <span className="text-primary">
+                                        {user.firstName}!
+                                    </span>
+                                </p>
+                                <p className="text-sm text-primary mb-10">
+                                    {user.email}
+                                </p>
+                                <button
+                                    className="btn btn-primary w-full"
+                                    onClick={signOut}
+                                >
+                                    Sign Out
+                                </button>
+                            </div>
+                        </li>
                     </ul>
-                    <div className="flex flex-col items-center mt-80 mb-5 w-full px-4">
-                        <p className="">
-                            Welcome back{" "}
-                            <span className="text-primary">
-                                {user.firstName}!
-                            </span>
-                        </p>
-                        <p className="text-sm text-primary mb-10">
-                            {user.email}
-                        </p>
-                        <button
-                            className="btn btn-primary w-full"
-                            onClick={signOut}
-                        >
-                            Sign Out
-                        </button>
-                    </div>
                 </div>
             </div>
         </main>
