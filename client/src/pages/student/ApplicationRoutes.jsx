@@ -4,6 +4,7 @@ import adviserRemarksSVG from "../../assets/img/remarks.svg";
 import pendingClearanceSVG from "../../assets/img/pendingClearance.svg";
 import clearanceApproved from "../../assets/img/approved.svg";
 import { useSWRConfig } from "swr";
+import { usePDF, Document, Page, PDFDownloadLink, Text, View, StyleSheet, Font } from '@react-pdf/renderer';
 
 const ApplicationRoutes = ({ application }) => {
     switch (application.step) {
@@ -139,9 +140,11 @@ const ApplicationRoutes = ({ application }) => {
                         Goodluck on your next journey in life.
                     </h3>
 
-                    <button className="btn btn-primary mt-8 sm:mt-10 px-4 py-2 sm:px-6 sm:py-3">
-                        PRINT CLEARANCE
-                    </button>
+                    <PDFDownloadLink className="btn btn-primary mt-8 sm:mt-10 px-4 py-2 sm:px-6 sm:py-3" document={<MyDoc application={application}/>} fileName="clearance.pdf">
+                    {({ blob, url, loading, error }) =>
+                        loading ? 'Loading document...' : 'PRINT CLEARANCE'
+                    }
+                    </PDFDownloadLink>
                 </div>
             );
     }
@@ -168,3 +171,61 @@ const DeleteButton = () => {
         </button>
     );
 };
+const styles = StyleSheet.create({
+    page: { backgroundColor: 'white', padding: 40},
+    section: { 
+        color: 'black', 
+        textAlign: 'center', 
+        margin: 30, 
+        fontFamily: 'Courier' },
+    date: {
+        fontSize: 16,
+        textAlign: 'justified',
+        color: 'black',
+        fontFamily: 'Courier',
+        margin: 15,
+      },
+    heading: {
+        fontSize: 14,
+        textAlign: 'center',
+        color: 'black',
+        fontFamily: 'Courier',
+        margin: 5, 
+    },
+    body: {
+        fontSize: 14,
+        textAlign: 'justified',
+        color: 'black',
+        fontFamily: 'Courier',
+        margin: 5, 
+    },
+});
+const MyDoc = ({application}) => (
+    <Document>
+        <Page size="A4" style={styles.page}>
+            <View style={styles.section}>
+                <Text>UNIVERSITY OF THE PHILLIPINES LOS BAÑOS</Text>
+            </View>
+            <View>
+                <Text style={styles.heading}>College of Arts and Sciences</Text>
+                <Text style={styles.heading}>Institute of Computer Science</Text>
+            </View>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <View style={{flex: 1, height: 1, backgroundColor: 'black'}} />
+            </View>
+            <View>
+                <Text style={styles.date}>{application.submission.date}</Text>
+            </View>
+            <View>
+                <Text style={styles.body}> This document certifies that {application.createdBy.firstName} {application.createdBy.middleName} {application.createdBy.lastName}, {application.createdBy.studentNumber} has satisfied the clearance requirements of the institute.</Text>
+            </View>
+            <View>
+                <Text style={styles.date}>Verified:</Text>
+            </View>
+            <View>
+                <Text style={styles.body}>Academic Adviser: {application.adviser.firstName} {application.adviser.middleName} {application.adviser.lastName}</Text>
+                <Text style={styles.body}>Clearance Officer:</Text>
+            </View>
+        </Page>
+  </Document>
+  );
