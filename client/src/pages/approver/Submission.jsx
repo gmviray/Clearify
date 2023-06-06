@@ -7,7 +7,7 @@ import { BsCalendarDateFill } from "react-icons/bs";
 import moment from "moment";
 
 export default ({ item, user }) => (
-    <div className="flex gap-10">
+    <div className="flex flex-col gap-4 md:flex-row md:gap-10">
         <div className="flex flex-col gap-2">
             <div className="flex items-center gap-4">
                 <h3 className="font-bold text-accent flex items-center gap-2">

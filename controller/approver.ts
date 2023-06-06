@@ -85,10 +85,14 @@ export const getApplication = async (req: Request, res: Response) => {
 };
 
 export const approveApplication = async (req: Request, res: Response) => {
+    const token = req.cookies["token-id"];
+
+    const decoded = decodeJWT(token);
+
     const { id } = req.body;
 
     const application = await ApplicationModel.findOne({
-        _id: id,
+        "createdBy.studentNumber": id,
         status: "open",
     });
 
@@ -103,7 +107,20 @@ export const approveApplication = async (req: Request, res: Response) => {
             application.step = 3;
             break;
         case 3:
+            const approver = await UserModel.findOne({ _id: decoded.id });
+            if (!approver)
+                throw new APIError(
+                    { approver: "Failed to find the approver account" },
+                    StatusCodes.BAD_REQUEST
+                );
             application.step = 5;
+            application.clearedBy = {
+                firstName: approver.firstName,
+                lastName: approver.lastName,
+                middleName: approver.middleName || "",
+                email: approver.email,
+                username: approver.username as string,
+            };
             application.status = "completed";
             break;
     }
@@ -125,7 +142,7 @@ export const rejectApplication = async (req: Request, res: Response) => {
     const { id, remark, username } = req.body;
 
     const application = await ApplicationModel.findOne({
-        _id: id,
+        "createdBy.studentNumber": id,
         status: "open",
     });
 

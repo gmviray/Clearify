@@ -3,6 +3,7 @@ import { useUserStore } from "../../store";
 
 // Icons
 import { FaClock } from "react-icons/fa";
+import RemarksModal from "./RemarksModal";
 
 const ApproverLayout = () => {
     const signOut = useUserStore((state) => state.signOut);
@@ -29,7 +30,6 @@ const ApproverLayout = () => {
                                     viewBox="0 0 24 24"
                                     className="inline-block w-5 h-5 stroke-current"
                                 >
-
                                     <path
                                         strokeLinecap="round"
                                         strokeLinejoin="round"
@@ -74,7 +74,8 @@ const ApproverLayout = () => {
                         <li>
                             <NavLink
                                 className={({ isActive }) =>
-                                    `${isActive ? "active" : ""
+                                    `${
+                                        isActive ? "active" : ""
                                     } flex items-center`
                                 }
                                 to="/"
@@ -103,6 +104,7 @@ const ApproverLayout = () => {
                         </li>
                     </ul>
                 </div>
+                <RemarksModal />
             </div>
         </main>
     );
