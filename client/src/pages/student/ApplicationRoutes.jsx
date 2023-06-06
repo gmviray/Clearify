@@ -214,16 +214,16 @@ const MyDoc = ({application}) => (
             <View style={{flex: 1, height: 1, backgroundColor: 'black'}} />
             </View>
             <View>
-                <Text style={styles.date}></Text>
+                <Text style={styles.date}>{application.submission.date}</Text>
             </View>
             <View>
-                <Text style={styles.body}> This document certifies that  satisfies the requirements of the institute.</Text>
+                <Text style={styles.body}> This document certifies that {application.createdBy.firstName} {application.createdBy.middleName} {application.createdBy.lastName}, {application.createdBy.studentNumber} has satisfied the clearance requirements of the institute.</Text>
             </View>
             <View>
                 <Text style={styles.date}>Verified:</Text>
             </View>
             <View>
-                <Text style={styles.body}>Academic Adviser:</Text>
+                <Text style={styles.body}>Academic Adviser: {application.adviser.firstName} {application.adviser.middleName} {application.adviser.lastName}</Text>
                 <Text style={styles.body}>Clearance Officer:</Text>
             </View>
         </Page>
