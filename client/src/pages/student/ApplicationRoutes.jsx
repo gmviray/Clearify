@@ -171,7 +171,61 @@ const DeleteButton = () => {
         </button>
     );
 };
-const MyDoc = () => (
+const styles = StyleSheet.create({
+    page: { backgroundColor: 'white', padding: 40},
+    section: { 
+        color: 'black', 
+        textAlign: 'center', 
+        margin: 30, 
+        fontFamily: 'Courier' },
+    date: {
+        fontSize: 16,
+        textAlign: 'justified',
+        color: 'black',
+        fontFamily: 'Courier',
+        margin: 15,
+      },
+    heading: {
+        fontSize: 14,
+        textAlign: 'center',
+        color: 'black',
+        fontFamily: 'Courier',
+        margin: 5, 
+    },
+    body: {
+        fontSize: 14,
+        textAlign: 'justified',
+        color: 'black',
+        fontFamily: 'Courier',
+        margin: 5, 
+    },
+});
+const MyDoc = ({application}) => (
     <Document>
+        <Page size="A4" style={styles.page}>
+            <View style={styles.section}>
+                <Text>UNIVERSITY OF THE PHILLIPINES LOS BAÑOS</Text>
+            </View>
+            <View>
+                <Text style={styles.heading}>College of Arts and Sciences</Text>
+                <Text style={styles.heading}>Institute of Computer Science</Text>
+            </View>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <View style={{flex: 1, height: 1, backgroundColor: 'black'}} />
+            </View>
+            <View>
+                <Text style={styles.date}></Text>
+            </View>
+            <View>
+                <Text style={styles.body}> This document certifies that  satisfies the requirements of the institute.</Text>
+            </View>
+            <View>
+                <Text style={styles.date}>Verified:</Text>
+            </View>
+            <View>
+                <Text style={styles.body}>Academic Adviser:</Text>
+                <Text style={styles.body}>Clearance Officer:</Text>
+            </View>
+        </Page>
   </Document>
   );
