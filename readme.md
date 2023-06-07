@@ -5,7 +5,6 @@
 <br />
 <div align="center">
   <a href="https://github.com/CMSC100-UV4L/project-kennethtegrado">
-    <!-- <img src="images/logo.png" alt="Logo" width="80" height="80"> -->
   </a>
 
 <h3 align="center">Clearify</h3>
@@ -50,6 +49,9 @@
 <!-- ABOUT THE PROJECT -->
 
 ## About The Project
+![Screenshot from 2023-06-07 09-46-43](https://github.com/CMSC100-UV4L/clearify-project/assets/59082020/5f7bcff2-8b90-466b-af08-29199b96fee5)
+![image](https://github.com/CMSC100-UV4L/clearify-project/assets/59082020/60bbf7af-3126-4eca-94ab-9e123aa67eb3)
+![image](https://github.com/CMSC100-UV4L/clearify-project/assets/59082020/cc4c2088-581c-4a3a-8ee6-9c7d3d41b79d)
 
 <!-- [![Product Name Screen Shot][product-screenshot]](https://example.com) -->
 
