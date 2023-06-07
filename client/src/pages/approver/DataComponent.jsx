@@ -8,12 +8,14 @@ import {
 } from "react-icons/fa";
 
 import { useNavigate } from "react-router-dom";
+import moment from "moment";
 
 export default ({ data, officer }) => {
     const navigate = useNavigate();
     const [searchKeyword, setSearchKeyword] = useState("");
     const [increasingStudentNumber, setIncreasingStudentNumber] =
         useState(false);
+    const [increasingDate, setIncreasingDate] = useState(false);
     const [increasingName, setIncreasingName] = useState(false);
     const [filteredData, setFilteredData] = useState(data);
 
@@ -54,6 +56,26 @@ export default ({ data, officer }) => {
             return sortedData;
         });
         setIncreasingStudentNumber((prev) => !prev);
+    };
+
+    const handleDateSort = () => {
+        setFilteredData((prevData) => {
+            const sortedData = [...prevData]; // Create a copy of the previous filteredData array
+
+            sortedData.sort((a, b) => {
+                const dateA = new Date(a.submission.date).getTime();
+                const dateB = new Date(b.submission.date).getTime();
+
+                if (increasingDate) {
+                    return dateA - dateB;
+                } else {
+                    return dateB - dateA;
+                }
+            });
+
+            return sortedData;
+        });
+        setIncreasingDate((prev) => !prev);
     };
 
     const handleNameSort = () => {
@@ -100,7 +122,7 @@ export default ({ data, officer }) => {
                     </svg>
                 </button>
             </form>
-            <div className="flex gap-4 text-sm mb-6">
+            <div className="flex flex-wrap gap-4 text-sm mb-6">
                 <button onClick={handleStudentNumberSort}>
                     <span className="flex items-center gap-1 text-neutral">
                         Student Number{" "}
@@ -121,11 +143,24 @@ export default ({ data, officer }) => {
                         )}
                     </span>
                 </button>
+                <button onClick={handleDateSort}>
+                    <span className="flex items-center gap-1 text-neutral">
+                        Date Submitted{" "}
+                        {increasingDate ? (
+                            <FaSortAlphaUp />
+                        ) : (
+                            <FaSortAlphaDown />
+                        )}
+                    </span>
+                </button>
             </div>
             <div className="table-container">
                 <table className="table">
                     <thead>
                         <tr>
+                            <th className="text-primary bg-transparent">
+                                Date Submitted
+                            </th>
                             <th className="text-primary bg-transparent">
                                 Student Number
                             </th>
@@ -139,33 +174,40 @@ export default ({ data, officer }) => {
                         </tr>
                     </thead>
                     <tbody>
-                        {filteredData.map(({ createdBy, adviser, _id }) => (
-                            <tr key={_id}>
-                                <td>{createdBy.studentNumber}</td>
-                                <td>{`${createdBy.lastName}, ${
-                                    createdBy.firstName
-                                } ${createdBy.middleName || ""}`}</td>
-                                <td>
-                                    {officer
-                                        ? `${adviser.lastName}, ${
-                                              adviser.firstName
-                                          } ${adviser.middleName || ""}`
-                                        : createdBy.email}
-                                </td>
-                                <td>
-                                    <button
-                                        className="btn btn-primary btn-sm"
-                                        onClick={() =>
-                                            navigate(
-                                                `/application/${createdBy.studentNumber}`
-                                            )
-                                        }
-                                    >
-                                        View
-                                    </button>
-                                </td>
-                            </tr>
-                        ))}
+                        {filteredData.map(
+                            ({ createdBy, adviser, _id, submission }) => (
+                                <tr key={_id}>
+                                    <td>
+                                        {moment(submission.date).format(
+                                            "MMMM D, YYYY"
+                                        )}
+                                    </td>
+                                    <td>{createdBy.studentNumber}</td>
+                                    <td>{`${createdBy.lastName}, ${
+                                        createdBy.firstName
+                                    } ${createdBy.middleName || ""}`}</td>
+                                    <td>
+                                        {officer
+                                            ? `${adviser.lastName}, ${
+                                                  adviser.firstName
+                                              } ${adviser.middleName || ""}`
+                                            : createdBy.email}
+                                    </td>
+                                    <td>
+                                        <button
+                                            className="btn btn-primary btn-sm"
+                                            onClick={() =>
+                                                navigate(
+                                                    `/application/${createdBy.studentNumber}`
+                                                )
+                                            }
+                                        >
+                                            View
+                                        </button>
+                                    </td>
+                                </tr>
+                            )
+                        )}
                     </tbody>
                 </table>
             </div>
