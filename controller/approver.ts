@@ -26,7 +26,7 @@ export const getPendingAdviserApplications = async (
         step: 1,
         status: "open",
         "adviser.username": adviser.username,
-    }).select("createdBy adviser");
+    }).select("createdBy adviser submission.date");
 
     return res
         .status(StatusCodes.OK)
@@ -46,7 +46,7 @@ export const getPendingOfficerApplications = async (
     const pendingApplications = await ApplicationModel.find({
         step: 3,
         status: "open",
-    }).select("createdBy adviser");
+    }).select("createdBy adviser submission.date");
 
     return res
         .status(StatusCodes.OK)
